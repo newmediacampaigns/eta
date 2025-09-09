@@ -15,32 +15,14 @@ function handleCache(
     ? this.templatesAsync
     : this.templatesSync;
 
-  if (this.resolvePath && this.readFile && !template.startsWith("@")) {
-    const templatePath = options.filepath as string;
+  const cachedTemplate = templateStore.get(template);
 
-    const cachedTemplate = templateStore.get(templatePath);
-
-    if (this.config.cache && cachedTemplate) {
-      return cachedTemplate;
-    } else {
-      const templateString = this.readFile(templatePath);
-
-      const templateFn = this.compile(templateString, options);
-
-      if (this.config.cache) templateStore.define(templatePath, templateFn);
-
-      return templateFn;
-    }
+  if (cachedTemplate) {
+    return cachedTemplate;
   } else {
-    const cachedTemplate = templateStore.get(template);
-
-    if (cachedTemplate) {
-      return cachedTemplate;
-    } else {
-      throw new EtaNameResolutionError(
-        "Failed to get template '" + template + "'",
-      );
-    }
+    throw new EtaNameResolutionError(
+      "Failed to get template '" + template + "'",
+    );
   }
 }
 
@@ -54,10 +36,6 @@ export function render<T extends object>(
   const options = { ...meta, async: false };
 
   if (typeof template === "string") {
-    if (this.resolvePath && this.readFile && !template.startsWith("@")) {
-      options.filepath = this.resolvePath(template, options);
-    }
-
     templateFn = handleCache.call(this, template, options);
   } else {
     templateFn = template;
@@ -78,10 +56,6 @@ export function renderAsync<T extends object>(
   const options = { ...meta, async: true };
 
   if (typeof template === "string") {
-    if (this.resolvePath && this.readFile && !template.startsWith("@")) {
-      options.filepath = this.resolvePath(template, options);
-    }
-
     templateFn = handleCache.call(this, template, options);
   } else {
     templateFn = template;

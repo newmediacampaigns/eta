@@ -13,7 +13,7 @@ import { EtaError, RuntimeErr } from "./err.ts";
 import { TemplateFunction } from "./compile.ts";
 
 /* TYPES */
-import type { EtaConfig, Options } from "./config.ts";
+import type { EtaConfig } from "./config.ts";
 /* END TYPES */
 
 export class Eta {
@@ -38,16 +38,8 @@ export class Eta {
   renderString = renderString;
   renderStringAsync = renderStringAsync;
 
-  filepathCache: Record<string, string> = {};
   templatesSync: Cacher<TemplateFunction> = new Cacher<TemplateFunction>({});
   templatesAsync: Cacher<TemplateFunction> = new Cacher<TemplateFunction>({});
-
-  // resolvePath takes a relative path from the "views" directory
-  resolvePath:
-    | null
-    | ((this: Eta, template: string, options?: Partial<Options>) => string) =
-      null;
-  readFile: null | ((this: Eta, path: string) => string) = null;
 
   // METHODS
 

@@ -25,8 +25,6 @@ export interface EtaConfig {
   /** Whether or not to cache templates if `name` or `filename` is passed */
   cache: boolean;
 
-  /** Holds cache of resolved filepaths. Set to `false` to disable. */
-  cacheFilepaths: boolean;
 
   /** Whether to pretty-format error messages (introduces runtime penalties) */
   debug: boolean;
@@ -75,12 +73,6 @@ export interface EtaConfig {
 
   /** Name of the data object. Default `it` */
   varName: string;
-
-  /** Directory that contains templates */
-  views?: string;
-
-  /** Control template file extension defaults. Default `.eta` */
-  defaultExtension?: string;
 }
 
 /* END TYPES */
@@ -91,7 +83,6 @@ const defaultConfig: EtaConfig = {
   autoFilter: false,
   autoTrim: [false, "nl"],
   cache: false,
-  cacheFilepaths: true,
   debug: false,
   escapeFunction: XMLEscape,
   // default filter function (not used unless enables) just stringifies the input
@@ -108,7 +99,6 @@ const defaultConfig: EtaConfig = {
   outputTags: ["{{", "}}"],
   useWith: false,
   varName: "it",
-  defaultExtension: ".eta",
 };
 
 export { defaultConfig };

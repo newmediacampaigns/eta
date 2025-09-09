@@ -1,12 +1,6 @@
 /* global it, expect, describe */
 
-import path from "node:path";
-
 import { Eta } from "../src/index";
-
-interface SimpleEtaTemplate {
-  name: string;
-}
 
 describe("basic functionality", () => {
   const eta = new Eta();
@@ -46,15 +40,6 @@ describe("render caching", () => {
   });
 });
 
-describe("render caching w/ files", () => {
-  const eta = new Eta({ cache: true, views: path.join(__dirname, "templates") });
-
-  eta.loadTemplate(path.join(__dirname, "templates/nonexistent.eta"), "Hi {{it.name}}");
-
-  it("Template files cache", () => {
-    expect(eta.render("./nonexistent", { name: "Ada Lovelace" })).toEqual("Hi Ada Lovelace");
-  });
-});
 
 describe("useWith", () => {
   it("Puts `it` in global scope with env.useWith", () => {
@@ -104,21 +89,7 @@ describe("async", () => {
 });
 
 describe("layouts", () => {
-  const eta = new Eta({ views: path.join(__dirname, "templates") });
-
-  it("Nested layouts work as expected", () => {
-    const res = eta.render("index.eta", { title: "Cool Title" });
-
-    expect(res).toEqual(`<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Cool Title</title>
-</head>
-<body>
-This is the template body.
-</body>
-</html>`);
-  });
+  const eta = new Eta();
 
   it("Layouts are called with arguments if they're provided", async () => {
     eta.loadTemplate(
@@ -139,22 +110,3 @@ This is a layout`,
   });
 });
 
-describe("file rendering", () => {
-  const eta = new Eta({ views: path.join(__dirname, "templates") });
-
-  it("renders template file properly", () => {
-    const res = eta.render<SimpleEtaTemplate>("simple.eta", { name: "friend" });
-
-    expect(res).toEqual("Hi friend");
-  });
-
-  it("renders async template file properly", async () => {
-    const res = await eta.renderAsync("async.eta", {});
-
-    expect(res).toEqual(`ASYNC CONTENT BELOW!
-
-
-
-HI FROM ASYNC`);
-  });
-});
