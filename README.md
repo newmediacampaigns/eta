@@ -80,30 +80,57 @@ Eta uses Twig-inspired delimiters:
 
 _For more thorough documentation, visit [https://eta.js.org](https://eta.js.org)_
 
+### Browser Usage
+
+Eta is optimized for browser use with **only ~2.5KB** minified+gzipped:
+
+**ES Modules (Recommended):**
+```html
+<script type="module">
+  import { Eta } from './dist/browser.module.mjs';
+  
+  const eta = new Eta();
+  
+  // Direct string rendering
+  const result = eta.renderString('Hi {{ it.name }}!', { name: 'World' });
+  document.body.innerHTML = result;
+  
+  // Pre-load templates for reuse
+  eta.loadTemplate('greeting', 'Hello {{ it.name }}, welcome to {{ it.site }}!');
+  const greeting = eta.render('greeting', { name: 'Alice', site: 'our site' });
+</script>
+```
+
+**UMD (Universal):**
+```html
+<script src="./dist/browser.umd.js"></script>
+<script>
+  const eta = new window.eta.Eta();
+  const result = eta.renderString('Hi {{ it.name }}!', { name: 'World' });
+  document.body.innerHTML = result;
+</script>
+```
+
+### Node.js Usage
+
 Install Eta
 
 ```bash
 npm install eta
 ```
 
-In the root of your project, create `templates/simple.eta`
-
-```eta
-Hi {{ it.name }}!
-```
-
-Then, in your JS file:
-
 ```js
 import { Eta } from "eta";
-// import { Eta } from "https://deno.land/x/eta@v3.1.0/src/index.ts";
 
-const eta = new Eta({ views: path.join(__dirname, "templates") });
+const eta = new Eta();
 
-// Render a template
+// Direct template rendering
+const result = eta.renderString('Hi {{ it.name }}!', { name: 'Ben' });
+console.log(result); // Hi Ben!
 
-const res = eta.render("./simple", { name: "Ben" });
-console.log(res); // Hi Ben!
+// Pre-load templates
+eta.loadTemplate('greeting', 'Hello {{ it.name }}!');
+const greeting = eta.render('greeting', { name: 'Alice' });
 ```
 
 ## FAQs
