@@ -15,14 +15,14 @@ describe("ParseErr", () => {
 
   it("error while parsing - renderString", () => {
     try {
-      eta.renderString("template <%", {});
+      eta.renderString("template {%", {});
     } catch (ex) {
       expect(ex).toBeInstanceOf(EtaError);
       expect(ex).toBeInstanceOf(EtaParseError);
       expect((ex as EtaParseError).name).toBe("EtaParser Error");
       expect((ex as EtaParseError).message).toBe(`unclosed tag at line 1 col 10:
 
-  template <%
+  template {%
            ^`);
       expect(ex instanceof Error).toBe(true);
     }
@@ -30,14 +30,14 @@ describe("ParseErr", () => {
 
   it("error while parsing - compile", () => {
     try {
-      eta.compile("template <%");
+      eta.compile("template {%");
     } catch (ex) {
       expect(ex).toBeInstanceOf(EtaError);
       expect(ex).toBeInstanceOf(EtaParseError);
       expect((ex as EtaParseError).name).toBe("EtaParser Error");
       expect((ex as EtaParseError).message).toBe(`unclosed tag at line 1 col 10:
 
-  template <%
+  template {%
            ^`);
       expect(ex instanceof Error).toBe(true);
     }
@@ -58,7 +58,7 @@ describe("RuntimeErr", () => {
       expect((ex as EtaRuntimeError).name).toBe("ReferenceError");
       expect((ex as EtaRuntimeError).message).toBe(`${errorFilepath}:2
     1| 
- >> 2| <%= undefinedVariable %>
+ >> 2| {{ undefinedVariable }}
     3| Lorem Ipsum
 
 undefinedVariable is not defined`);

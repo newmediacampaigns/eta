@@ -1,7 +1,7 @@
-<% layout('./outer-layout') %>
+{% layout('./outer-layout') %}
 <head>
-    <title><%= it.title %></title>
+    <title>{{ it.title }}</title>
 </head>
 <body>
-<%~ it.body %>
+{%~ it.body %}
 </body>

@@ -64,8 +64,11 @@ export interface EtaConfig {
   /** Remove all safe-to-remove whitespace */
   rmWhitespace: boolean;
 
-  /** Delimiters: by default `['<%', '%>']` */
+  /** Delimiters: by default `['{%', '%}']` for tags/expressions */
   tags: [string, string];
+
+  /** Output delimiters: by default `['{{', '}}']` for interpolation */
+  outputTags: [string, string];
 
   /** Make data available on the global object instead of varName */
   useWith: boolean;
@@ -101,7 +104,8 @@ const defaultConfig: EtaConfig = {
   },
   plugins: [],
   rmWhitespace: false,
-  tags: ["<%", "%>"],
+  tags: ["{%", "%}"],
+  outputTags: ["{{", "}}"],
   useWith: false,
   varName: "it",
   defaultExtension: ".eta",

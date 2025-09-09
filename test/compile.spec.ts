@@ -12,7 +12,7 @@ const complexTemplate = fs.readFileSync(filePath, "utf8");
 
 describe("Compile test", () => {
   it("parses a simple template", () => {
-    const str = eta.compile("hi <%= hey %>");
+    const str = eta.compile("hi {{ hey }}");
     expect(str).toBeTruthy();
   });
 
@@ -28,7 +28,7 @@ describe("Compile test", () => {
 
   test("throws with bad inner JS syntax", () => {
     expect(() => {
-      eta.compile("<% hi (=h) %>");
+      eta.compile("{% hi (=h) %}");
     }).toThrow();
   });
 });

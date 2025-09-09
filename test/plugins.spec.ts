@@ -45,7 +45,7 @@ const replaceThumbsUp = () => {
 describe("Plugins", () => {
   it("Plugins function properly", () => {
     const eta = new Eta({ plugins: [myPlugin()] });
-    const template = `<%= it.val %> <%= @@num@@ %>.`;
+    const template = `{{ it.val }} {{ @@num@@ }}.`;
 
     expect(eta.renderString(template, { val: "value" })).toEqual("value 2352.3.String to append");
   });

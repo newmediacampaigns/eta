@@ -108,13 +108,16 @@ export function parse(this: Eta, str: string): Array<AstObject> {
     }
   }, "");
 
+  // Create regex for both tag types: {% %} for expressions/code and {{ }} for output
   const parseOpenReg = new RegExp(
-    escapeRegExp(config.tags[0]) + "(-|_)?\\s*(" + prefixes + ")?\\s*",
+    "(" + escapeRegExp(config.tags[0]) + "(-|_)?\\s*(" + prefixes + ")?\\s*)" + 
+    "|(" + escapeRegExp(config.outputTags[0]) + "(-|_)?\\s*)",
     "g",
   );
 
   const parseCloseReg = new RegExp(
-    "'|\"|`|\\/\\*|(\\s*(-|_)?" + escapeRegExp(config.tags[1]) + ")",
+    "'|\"|`|\\/\\*|(\\s*(-|_)?" + escapeRegExp(config.tags[1]) + ")" +
+    "|(\\s*(-|_)?" + escapeRegExp(config.outputTags[1]) + ")",
     "g",
   );
 
@@ -125,8 +128,10 @@ export function parse(this: Eta, str: string): Array<AstObject> {
 
     lastIndex = m[0].length + m.index;
 
-    const wsLeft = m[1];
-    const prefix = m[2] || ""; // by default either ~, =, or empty
+    // Determine if this is a tag block {% %} or output block {{ }}
+    const isOutputTag = m[4] !== undefined; // {{ }} match group
+    const wsLeft = isOutputTag ? m[5] : m[2]; // whitespace trimming
+    const prefix = isOutputTag ? "=" : (m[3] || ""); // output tags default to interpolation, tag blocks use prefix
 
     pushString(precedingString, wsLeft);
 
@@ -135,12 +140,12 @@ export function parse(this: Eta, str: string): Array<AstObject> {
     let currentObj: AstObject | false = false;
 
     while ((closeTag = parseCloseReg.exec(str))) {
-      if (closeTag[1]) {
+      if (closeTag[1] || closeTag[3]) {
         const content = str.slice(lastIndex, closeTag.index);
 
         parseOpenReg.lastIndex = lastIndex = parseCloseReg.lastIndex;
 
-        trimLeftOfNextStr = closeTag[2];
+        trimLeftOfNextStr = closeTag[2] || closeTag[4];
 
         const currentType: TagType = prefix === parseOptions.exec
           ? "e"

@@ -11,7 +11,7 @@ describe("Config Tests", () => {
 
   it("no autoescape", () => {
     const eta = new Eta({ autoEscape: false });
-    const res = eta.renderString("<%= it.html %>", { html: "<p>Hi</p>" });
+    const res = eta.renderString("{{ it.html }}", { html: "<p>Hi</p>" });
     expect(res).toEqual("<p>Hi</p>"); // not escaped
   });
 
@@ -22,7 +22,7 @@ describe("Config Tests", () => {
   });
 
   it("filter function", () => {
-    const template = "My favorite food is <%= it.fav %>";
+    const template = "My favorite food is {{ it.fav }}";
     const baseEta = new Eta();
 
     expect(baseEta.renderString(template, {})).toEqual("My favorite food is undefined");
@@ -50,7 +50,7 @@ describe("Config Tests", () => {
       },
     });
 
-    expect(eta.renderString("<%= it.val1 %>, <%~ it.val2 %>, <%~ it.val3 %>", {})).toEqual(
+    expect(eta.renderString("{{ it.val1 }}, {%~ it.val2 %}, {%~ it.val3 %}", {})).toEqual(
       "The first, another, another"
     );
   });
@@ -65,7 +65,7 @@ describe("Config Tests", () => {
     expect(res).toEqual("John Appleseed");
 
     // the original tags should remain unchanged
-    expect(eta.config.tags).toEqual(["<%", "%>"]);
+    expect(eta.config.tags).toEqual(["{%", "%}"]);
   });
 
   it("configure", () => {
