@@ -51,10 +51,30 @@ Eta is a lightweight and blazing fast embedded JS templating engine that works i
   - **Layout support**!
 - 🔥 Reliable
   - Better quotes/comments support
-    - _ex._ `<%= someval + "string %>" %>` compiles correctly, while it fails with doT or EJS
+    - _ex._ `{{ someval + "string }}" }}` compiles correctly, while it fails with doT or EJS
   - Great error reporting
 - ⚡️ Exports ES Modules as well as UMD
 - 📝 Easy template syntax
+
+## Template Syntax
+
+Eta uses Twig-inspired delimiters:
+
+- `{{ }}` - Output/interpolation (escapes HTML by default)
+- `{% %}` - Tags/expressions/code blocks  
+- `{%~ %}` - Raw output (no HTML escaping)
+
+```eta
+<h1>{{ it.title }}</h1>
+
+{% for (var i = 0; i < it.items.length; i++) { %}
+  <p>{{ it.items[i].name }}: {%~ it.items[i].description %}</p>
+{% } %}
+
+{% if (it.user.isAdmin) { %}
+  <p>Welcome, admin!</p>
+{% } %}
+```
 
 ## Get Started
 
@@ -69,7 +89,7 @@ npm install eta
 In the root of your project, create `templates/simple.eta`
 
 ```eta
-Hi <%= it.name %>!
+Hi {{ it.name }}!
 ```
 
 Then, in your JS file:
