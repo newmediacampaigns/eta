@@ -79,6 +79,154 @@ Eta uses Twig-inspired delimiters:
 {% } %}
 ```
 
+## Twig-like Filters
+
+This fork includes powerful Twig-inspired filter support with pipe syntax for data transformation:
+
+### ✨ Basic Filter Usage
+
+```eta
+{{ it.name | upper }}
+{{ it.price | round(2) }}
+{{ it.text | trim | capitalize }}
+```
+
+### 🔧 Built-in Filters
+
+**String Filters:**
+- `upper` - Convert to uppercase
+- `lower` - Convert to lowercase
+- `capitalize` - Capitalize first letter
+- `trim` - Remove whitespace
+
+**Number Filters:**
+- `round(decimals)` - Round to specified decimal places
+- `abs` - Absolute value
+
+**Array/Object Filters:**
+- `length` - Get length of arrays or object keys
+- `join(separator)` - Join array elements with separator
+
+**Utility Filters:**
+- `default(value)` - Use fallback value if empty/null
+- `json` - Convert to JSON string
+
+### 📝 Filter Examples
+
+```eta
+<!-- String transformations -->
+<h1>{{ it.title | upper }}</h1>
+<p>{{ it.description | trim | capitalize }}</p>
+
+<!-- Number formatting -->
+<span>Price: ${{ it.price | round(2) }}</span>
+
+<!-- Array operations -->
+<p>Items: {{ it.tags | join(', ') }}</p>
+<span>Total: {{ it.items | length }} items</span>
+
+<!-- Fallback values -->
+<p>{{ it.username | default('Guest') }}</p>
+
+<!-- Raw JSON output -->
+<script>const data = {%~ it.config | json %};</script>
+```
+
+### 🎯 Custom Filter Registration
+
+```javascript
+const eta = new Eta();
+
+// Simple filter
+eta.addFilter('reverse', (text) => {
+  return String(text).split('').reverse().join('');
+});
+
+// Filter with arguments
+eta.addFilter('repeat', (text, times) => {
+  return String(text).repeat(times);
+});
+
+// Advanced filters
+eta.addFilter('slugify', (text) => {
+  return String(text)
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+});
+
+eta.addFilter('currency', (value, symbol = '$', decimals = 2) => {
+  return symbol + parseFloat(value).toFixed(decimals);
+});
+
+// Usage in templates
+eta.renderString('{{ it.title | slugify }}', { title: 'Hello World!' });
+// Output: "hello-world"
+
+eta.renderString('{{ it.price | currency("€") }}', { price: 19.99 });
+// Output: "€19.99"
+```
+
+### 🔗 Filter Chaining
+
+Combine multiple filters for complex transformations:
+
+```eta
+{{ it.userInput | trim | lower | capitalize }}
+{{ it.items | join(' ') | upper | trim }}
+{{ it.tags | length | default(0) }}
+```
+
+### 📋 Filter Management API
+
+```javascript
+// Add custom filter
+eta.addFilter(name, function);
+
+// Check if filter exists
+eta.hasFilter(name);
+
+// Get filter function
+eta.getFilter(name);
+
+// Remove filter
+eta.removeFilter(name);
+```
+
+### 💡 Advanced Filter Example
+
+```javascript
+const eta = new Eta();
+
+// Register multiple custom filters
+eta.addFilter('excerpt', (text, length = 100) => {
+  return text.length > length ? text.substring(0, length) + '...' : text;
+});
+
+eta.addFilter('fileSize', (bytes) => {
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  if (bytes === 0) return '0 Bytes';
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+});
+
+// Use in complex template
+const template = `
+<article>
+  <h1>{{ it.title | upper }}</h1>
+  <p>{{ it.content | excerpt(150) }}</p>
+  <small>Size: {{ it.fileSize | fileSize }}</small>
+</article>
+`;
+
+const result = eta.renderString(template, {
+  title: "my blog post",
+  content: "Lorem ipsum dolor sit amet...",
+  fileSize: 1048576
+});
+```
+
 ## Get Started
 
 _For more thorough documentation, visit [https://eta.js.org](https://eta.js.org)_

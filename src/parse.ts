@@ -11,6 +11,7 @@ export interface TemplateObject {
   t: TagType;
   val: string;
   lineNo?: number;
+  filters?: Array<{name: string, args: any[]}>;
 }
 
 export type AstObject = string | TemplateObject;
@@ -33,6 +34,59 @@ function escapeRegExp(string: string) {
 
 function getLineNo(str: string, index: number) {
   return str.slice(0, index).split("\n").length;
+}
+
+function parseFilters(content: string): {value: string, filters: Array<{name: string, args: any[]}>} {
+  const parts = content.split('|');
+  if (parts.length === 1) {
+    return { value: content.trim(), filters: [] };
+  }
+
+  const value = parts[0].trim();
+  const filters: Array<{name: string, args: any[]}> = [];
+
+  for (let i = 1; i < parts.length; i++) {
+    const filterStr = parts[i].trim();
+    const match = filterStr.match(/^(\w+)(?:\((.*)\))?$/);
+
+    if (match) {
+      const filterName = match[1];
+      const argsStr = match[2];
+      let args: any[] = [];
+
+      if (argsStr) {
+        try {
+          // Simple argument parsing - splits by comma and evaluates basic types
+          args = argsStr.split(',').map(arg => {
+            arg = arg.trim();
+            // Remove quotes for strings
+            if ((arg.startsWith('"') && arg.endsWith('"')) ||
+                (arg.startsWith("'") && arg.endsWith("'"))) {
+              return arg.slice(1, -1);
+            }
+            // Parse numbers
+            if (/^-?\d+(\.\d+)?$/.test(arg)) {
+              return parseFloat(arg);
+            }
+            // Parse booleans
+            if (arg === 'true') return true;
+            if (arg === 'false') return false;
+            if (arg === 'null') return null;
+            if (arg === 'undefined') return undefined;
+            // Return as string for variables/expressions
+            return arg;
+          });
+        } catch (e) {
+          // If parsing fails, treat as single string argument
+          args = [argsStr];
+        }
+      }
+
+      filters.push({ name: filterName, args });
+    }
+  }
+
+  return { value, filters };
 }
 
 export function parse(this: Eta, str: string): Array<AstObject> {
@@ -145,7 +199,17 @@ export function parse(this: Eta, str: string): Array<AstObject> {
           ? "i"
           : "";
 
-        currentObj = { t: currentType, val: content };
+        // Parse filters for interpolation and raw types
+        if (currentType === "i" || currentType === "r") {
+          const parsed = parseFilters(content);
+          currentObj = {
+            t: currentType,
+            val: parsed.value,
+            filters: parsed.filters.length > 0 ? parsed.filters : undefined
+          };
+        } else {
+          currentObj = { t: currentType, val: content };
+        }
         break;
       } else {
         const char = closeTag[0];

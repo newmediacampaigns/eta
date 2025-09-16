@@ -102,7 +102,11 @@ export function compileBody(this: Eta, buff: Array<AstObject>): string {
       if (type === "r") {
         // raw
 
-        if (config.autoFilter) {
+        // Apply Twig-like filters if present
+        if ((currentBlock as any).filters && (currentBlock as any).filters.length > 0) {
+          const filterChain = JSON.stringify((currentBlock as any).filters);
+          content = `this.applyFilters(${content}, ${filterChain})`;
+        } else if (config.autoFilter) {
           content = "__eta.f(" + content + ")";
         }
 
@@ -110,7 +114,11 @@ export function compileBody(this: Eta, buff: Array<AstObject>): string {
       } else if (type === "i") {
         // interpolate
 
-        if (config.autoFilter) {
+        // Apply Twig-like filters if present
+        if ((currentBlock as any).filters && (currentBlock as any).filters.length > 0) {
+          const filterChain = JSON.stringify((currentBlock as any).filters);
+          content = `this.applyFilters(${content}, ${filterChain})`;
+        } else if (config.autoFilter) {
           content = "__eta.f(" + content + ")";
         }
 
