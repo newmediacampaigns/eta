@@ -24,8 +24,13 @@ export function compileToString(
 
   // note: when the include function passes through options, the only parameter that matters is the filepath parameter
   let res = `${config.functionHeader}
-let include = (template, data) => this.render(template, data, options);
-let includeAsync = (template, data) => this.renderAsync(template, data, options);
+let include = (template, data) => {
+  try {
+    return this.renderAsync(template, data, options);
+  } catch {
+    return this.render(template, data, options);
+  }
+};
 
 let __eta = {res: "", e: this.config.escapeFunction, f: this.config.filterFunction${
     config.debug
@@ -45,8 +50,8 @@ function layout(path, data) {
 ${compileBody.call(this, buffer)}
 if (__eta.layout) {
   __eta.res = ${
-    isAsync ? "await includeAsync" : "include"
-  } (__eta.layout, {...${config.varName}, body: __eta.res, ...__eta.layoutData});
+    isAsync ? "await " : ""
+  }include (__eta.layout, {...${config.varName}, body: __eta.res, ...__eta.layoutData});
 }
 ${config.useWith ? "}" : ""}${
     config.debug
