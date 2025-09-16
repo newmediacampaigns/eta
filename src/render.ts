@@ -42,7 +42,7 @@ export function render<T extends object>(
   this: Eta,
   template: string | TemplateFunction, // template name or template function
   data: T,
-  meta?: { filepath: string },
+  meta?: {},
 ): string {
   let templateFn: TemplateFunction;
   const options = { ...meta, async: false };
@@ -62,7 +62,7 @@ export function renderAsync<T extends object>(
   this: Eta,
   template: string | TemplateFunction, // template name or template function
   data: T,
-  meta?: { filepath: string },
+  meta?: {},
 ): Promise<string> {
   let templateFn: TemplateFunction;
   const options = { ...meta, async: true };

@@ -7,9 +7,6 @@ type trimConfig = "nl" | "slurp" | false;
 export interface Options {
   /** Compile to async function */
   async?: boolean;
-
-  /** Absolute path to template file */
-  filepath?: string;
 }
 
 export interface EtaConfig {
@@ -22,8 +19,6 @@ export interface EtaConfig {
   /** Configure automatic whitespace trimming. Default `[false, 'nl']` */
   autoTrim: trimConfig | [trimConfig, trimConfig];
 
-  /** Whether or not to cache templates if `name` or `filename` is passed */
-  cache: boolean;
 
 
   /** Whether to pretty-format error messages (introduces runtime penalties) */
@@ -82,7 +77,6 @@ const defaultConfig: EtaConfig = {
   autoEscape: true,
   autoFilter: false,
   autoTrim: [false, "nl"],
-  cache: false,
   debug: false,
   escapeFunction: XMLEscape,
   // default filter function (not used unless enables) just stringifies the input

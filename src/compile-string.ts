@@ -22,7 +22,7 @@ export function compileToString(
 
   const buffer: Array<AstObject> = this.parse.call(this, str);
 
-  // note: when the include function passes through options, the only parameter that matters is the filepath parameter
+  // note: when the include function passes through options
   let res = `${config.functionHeader}
 let include = (template, data) => ${isAsync ? "this.renderAsync" : "this.render"}(template, data, options);
 
@@ -49,7 +49,7 @@ if (__eta.layout) {
 }
 ${config.useWith ? "}" : ""}${
     config.debug
-      ? "} catch (e) { this.RuntimeErr(e, __eta.templateStr, __eta.line, options.filepath) }"
+      ? "} catch (e) { this.RuntimeErr(e, __eta.templateStr, __eta.line) }"
       : ""
   }
 return __eta.res;

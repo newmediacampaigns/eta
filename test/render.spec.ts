@@ -23,7 +23,7 @@ describe("basic functionality", () => {
 });
 
 describe("render caching", () => {
-  const eta = new Eta({ cache: true });
+  const eta = new Eta(); // caching is always enabled in browser-optimized version
 
   eta.loadTemplate("@template1", "Hi {{it.name}}");
 

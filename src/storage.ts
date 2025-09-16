@@ -2,7 +2,7 @@
  * Handles storage and accessing of values
  *
  * In this case, we use it to store compiled template functions
- * Indexed by their `name` or `filename`
+ * Indexed by their `name`
  */
 
 export class Cacher<T> {

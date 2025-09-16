@@ -1,7 +1,6 @@
 import { Eta as EtaCore } from "./core.ts";
 export {
   EtaError,
-  EtaFileResolutionError,
   EtaNameResolutionError,
   EtaParseError,
   EtaRuntimeError,
