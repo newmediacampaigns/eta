@@ -15,7 +15,19 @@ function handleCache(
     ? this.templatesAsync
     : this.templatesSync;
 
-  const cachedTemplate = templateStore.get(template);
+  // For browser-only use, always assume internal storage
+  // Try the template name as-is first
+  let cachedTemplate = templateStore.get(template);
+  
+  // If not found and doesn't start with @, try with @ prefix for backward compatibility
+  if (!cachedTemplate && !template.startsWith('@')) {
+    cachedTemplate = templateStore.get('@' + template);
+  }
+  
+  // If not found and starts with @, try without @ prefix
+  if (!cachedTemplate && template.startsWith('@')) {
+    cachedTemplate = templateStore.get(template.slice(1));
+  }
 
   if (cachedTemplate) {
     return cachedTemplate;

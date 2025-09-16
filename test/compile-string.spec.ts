@@ -14,13 +14,7 @@ describe("Compile to String test", () => {
   it("compiles a simple template", () => {
     const str = eta.compileToString("hi {{ it.name }}");
     expect(str).toEqual(`
-let include = (template, data) => {
-  try {
-    return this.renderAsync(template, data, options);
-  } catch {
-    return this.render(template, data, options);
-  }
-};
+let include = (template, data) => this.render(template, data, options);
 
 let __eta = {res: "", e: this.config.escapeFunction, f: this.config.filterFunction};
 
@@ -43,13 +37,7 @@ return __eta.res;
   it("compiles a simple template with a raw tag", () => {
     const str = eta.compileToString("hi {%~ it.name %}");
     expect(str).toEqual(`
-let include = (template, data) => {
-  try {
-    return this.renderAsync(template, data, options);
-  } catch {
-    return this.render(template, data, options);
-  }
-};
+let include = (template, data) => this.render(template, data, options);
 
 let __eta = {res: "", e: this.config.escapeFunction, f: this.config.filterFunction};
 
@@ -72,13 +60,7 @@ return __eta.res;
   it("works with whitespace trimming", () => {
     const str = eta.compileToString("hi\n{%- = it.firstname-%}\n{%_ = it.lastname_%}");
     expect(str).toEqual(`
-let include = (template, data) => {
-  try {
-    return this.renderAsync(template, data, options);
-  } catch {
-    return this.render(template, data, options);
-  }
-};
+let include = (template, data) => this.render(template, data, options);
 
 let __eta = {res: "", e: this.config.escapeFunction, f: this.config.filterFunction};
 
@@ -102,13 +84,7 @@ return __eta.res;
   it("compiles complex template", () => {
     const str = eta.compileToString(complexTemplate);
     expect(str).toEqual(`
-let include = (template, data) => {
-  try {
-    return this.renderAsync(template, data, options);
-  } catch {
-    return this.render(template, data, options);
-  }
-};
+let include = (template, data) => this.render(template, data, options);
 
 let __eta = {res: "", e: this.config.escapeFunction, f: this.config.filterFunction};
 

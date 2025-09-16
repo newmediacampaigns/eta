@@ -24,13 +24,7 @@ export function compileToString(
 
   // note: when the include function passes through options, the only parameter that matters is the filepath parameter
   let res = `${config.functionHeader}
-let include = (template, data) => {
-  try {
-    return this.renderAsync(template, data, options);
-  } catch {
-    return this.render(template, data, options);
-  }
-};
+let include = (template, data) => ${isAsync ? "this.renderAsync" : "this.render"}(template, data, options);
 
 let __eta = {res: "", e: this.config.escapeFunction, f: this.config.filterFunction${
     config.debug
