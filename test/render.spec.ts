@@ -98,7 +98,7 @@ describe("layouts", () => {
     );
 
     const res = await eta.renderString(
-      `{% layout("@my-layout", { title: 'Nifty title', content: 'Nice content'}) %}
+      `{%- layout("@my-layout", { title: 'Nifty title', content: 'Nice content'}) -%}
 This is a layout`,
       { title: "Cool Title", randomNum: 3 }
     );

@@ -10,32 +10,36 @@ export function trimWS(
   wsLeft: string | false,
   wsRight?: string | false,
 ): string {
-  let leftTrim = config.autoTrim;
-  let rightTrim = config.autoTrim;
+  let leftTrim: string | boolean = config.autoTrim;
+  let rightTrim: string | boolean = config.autoTrim;
 
   // Override with tag-specific trimming
   if (wsLeft || wsLeft === false) {
-    leftTrim = wsLeft === "_" || wsLeft === "-";
+    leftTrim = wsLeft;
   }
 
   if (wsRight || wsRight === false) {
-    rightTrim = wsRight === "_" || wsRight === "-";
+    rightTrim = wsRight;
   }
 
   if (!rightTrim && !leftTrim) {
     return str;
   }
 
-  // Simple browser-optimized trimming
-  if (leftTrim && rightTrim) {
-    return str.trim();
-  }
-
-  if (leftTrim) {
+  // Handle different trim modes
+  if (leftTrim === "_") {
+    str = str.trimStart();
+  } else if (leftTrim === "-") {
+    str = str.replace(/^(?:\r\n|\n|\r)/, "");
+  } else if (leftTrim === true) {
     str = str.trimStart();
   }
 
-  if (rightTrim) {
+  if (rightTrim === "_") {
+    str = str.trimEnd();
+  } else if (rightTrim === "-") {
+    str = str.replace(/(?:\r\n|\n|\r)$/, "");
+  } else if (rightTrim === true) {
     str = str.trimEnd();
   }
 

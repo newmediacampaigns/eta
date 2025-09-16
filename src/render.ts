@@ -42,10 +42,11 @@ export function render<T extends object>(
   this: Eta,
   template: string | TemplateFunction, // template name or template function
   data: T,
-  meta?: {},
-): string {
+  meta?: Partial<Options>,
+): string | Promise<string> {
   let templateFn: TemplateFunction;
-  const options = { ...meta, async: false };
+  const options = { ...meta };
+  const isAsync = options.async;
 
   if (typeof template === "string") {
     templateFn = handleCache.call(this, template, options);
@@ -55,46 +56,36 @@ export function render<T extends object>(
 
   const res = templateFn.call(this, data, options);
 
-  return res;
+  return isAsync ? Promise.resolve(res) : res;
 }
 
 export function renderAsync<T extends object>(
   this: Eta,
   template: string | TemplateFunction, // template name or template function
   data: T,
-  meta?: {},
+  meta?: Partial<Options>,
 ): Promise<string> {
-  let templateFn: TemplateFunction;
-  const options = { ...meta, async: true };
-
-  if (typeof template === "string") {
-    templateFn = handleCache.call(this, template, options);
-  } else {
-    templateFn = template;
-  }
-
-  const res = templateFn.call(this, data, options);
-
-  // Return a promise
-  return Promise.resolve(res);
+  return render.call(this, template, data, { ...meta, async: true }) as Promise<string>;
 }
 
 export function renderString<T extends object>(
   this: Eta,
   template: string,
   data: T,
-): string {
-  const templateFn = this.compile(template, { async: false });
+  meta?: Partial<Options>,
+): string | Promise<string> {
+  const options = { ...meta };
+  const isAsync = options.async;
+  const templateFn = this.compile(template, { async: isAsync });
 
-  return render.call(this, templateFn, data);
+  return render.call(this, templateFn, data, options);
 }
 
 export function renderStringAsync<T extends object>(
   this: Eta,
   template: string,
   data: T,
+  meta?: Partial<Options>,
 ): Promise<string> {
-  const templateFn = this.compile(template, { async: true });
-
-  return renderAsync.call(this, templateFn, data);
+  return renderString.call(this, template, data, { ...meta, async: true }) as Promise<string>;
 }

@@ -95,27 +95,31 @@ function layout(path, data) {
 
 __eta.res+='Hi\\n'
 console.log("Hope you like Eta!")
-__eta.res+=__eta.e(it.htmlstuff)
 __eta.res+='\\n'
+__eta.res+=__eta.e(it.htmlstuff)
+__eta.res+='\\n\\n'
 for (var key in it.obj) {
-__eta.res+='Value: '
+__eta.res+='\\nValue: '
 __eta.res+=__eta.e(it.obj[key])
 __eta.res+=', Key: '
 __eta.res+=__eta.e(key)
-__eta.res+='\\n'
+__eta.res+='\\n\\n'
 if (key === 'thirdchild') {
-__eta.res+='  '
+__eta.res+='\\n  '
 for (var i = 0, arr = it.obj[key]; i < arr.length; i++) {
-__eta.res+='      Salutations! Index: '
+__eta.res+='\\n      Salutations! Index: '
 __eta.res+=__eta.e(i)
 __eta.res+=', parent key: '
 __eta.res+=__eta.e(key)
-__eta.res+='      \\n  '
+__eta.res+='\\n      \\n  '
 }
+__eta.res+='\\n'
 }
+__eta.res+='\\n'
 }
-__eta.res+='\\nThis is a partial: '
+__eta.res+='\\n\\nThis is a partial: '
 __eta.res+=include("mypartial")
+__eta.res+='\\n'
 
 if (__eta.layout) {
   __eta.res = include (__eta.layout, {...it, body: __eta.res, ...__eta.layoutData});
