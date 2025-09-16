@@ -29,26 +29,27 @@
 
 <span align="center">
 
-**You're viewing the source for Eta v3, which we just released! For v2, visit [the old branch](https://github.com/eta-dev/eta/tree/v2).**
+**🚀 Browser-Optimized Fork: This is a customized version of Eta v3 specifically optimized for browser-only usage with unified includes and simplified template resolution.**
 
 </span>
 
 ## Summary
 
-Eta is a lightweight and blazing fast embedded JS templating engine that works inside Node, Deno, and the browser. It's written in TypeScript and emphasizes great performance, configurability, and small bundle size.
+Eta is a lightweight and blazing fast embedded JS templating engine optimized for browser use. This fork is specifically tailored for browser-only usage with simplified APIs and smaller bundle sizes. It's written in TypeScript and emphasizes great performance, configurability, and ease of use.
 
 ### 🌟 Features
 
 - 📦 0 dependencies
-- 💡 Only ~3.5 KB minzipped
+- 💡 Only ~2.5 KB minzipped (browser-optimized)
 - ⚡️ Written in TypeScript
-- ✨ Deno support (+ Node and browser)
+- 🌐 **Browser-first design** with simplified APIs
 - 🚀 Super Fast
 - 🔧 Configurable
   - Plugins, custom delimiters, caching
 - 🔨 Powerful
-  - Precompilation, partials, async
+  - Precompilation, **unified includes**, async support
   - **Layout support**!
+  - **No @ prefix required** for template names
 - 🔥 Reliable
   - Better quotes/comments support
     - _ex._ `{{ someval + "string }}" }}` compiles correctly, while it fails with doT or EJS
@@ -84,6 +85,15 @@ _For more thorough documentation, visit [https://eta.js.org](https://eta.js.org)
 
 Eta is optimized for browser use with **only ~2.5KB** minified+gzipped:
 
+#### ✨ Browser-Optimized Features
+
+This fork includes special optimizations for browser-only usage:
+
+- **🔗 Unified Include Directive**: No more `includeAsync` - just use `include()` for both sync and async templates
+- **📝 No @ Prefix Required**: Templates can be referenced by simple names like `"header"` instead of `"@header"`
+- **🔄 Backward Compatible**: Existing code with `@` prefixes still works
+- **📦 Smaller Bundle**: Removed server-side filesystem resolution code
+
 **ES Modules (Recommended):**
 ```html
 <script type="module">
@@ -95,9 +105,13 @@ Eta is optimized for browser use with **only ~2.5KB** minified+gzipped:
   const result = eta.renderString('Hi {{ it.name }}!', { name: 'World' });
   document.body.innerHTML = result;
   
-  // Pre-load templates for reuse
+  // Pre-load templates for reuse (no @ prefix needed!)
   eta.loadTemplate('greeting', 'Hello {{ it.name }}, welcome to {{ it.site }}!');
+  eta.loadTemplate('header', 'Header: {{ it.title }}');
+  eta.loadTemplate('page', 'Page: {%~ include("header", {title: "My Site"}) %} - Content: {{ it.content }}');
+  
   const greeting = eta.render('greeting', { name: 'Alice', site: 'our site' });
+  const page = eta.render('page', { content: 'Welcome!' });
 </script>
 ```
 
@@ -106,8 +120,15 @@ Eta is optimized for browser use with **only ~2.5KB** minified+gzipped:
 <script src="./dist/browser.umd.js"></script>
 <script>
   const eta = new window.eta.Eta();
+  
+  // Simple rendering
   const result = eta.renderString('Hi {{ it.name }}!', { name: 'World' });
-  document.body.innerHTML = result;
+  
+  // Template with includes (unified directive)
+  eta.loadTemplate('nav', 'Nav: {{ it.links }}');
+  const withInclude = eta.renderString('Page: {%~ include("nav", {links: "Home | About"}) %}', {});
+  
+  document.body.innerHTML = result + '<br>' + withInclude;
 </script>
 ```
 
