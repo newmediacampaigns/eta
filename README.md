@@ -51,6 +51,8 @@ Eta is a lightweight and blazing fast embedded JS templating engine optimized fo
   - Precompilation, **unified includes**, async support
   - **Layout support**!
   - **No @ prefix required** for template names
+  - **Twig-like syntax** for familiar for loops and conditionals
+  - **Twig-inspired filters** with pipe syntax
   - **Simplified error handling** for browser environments
 - 🔥 Reliable
   - Better quotes/comments support
@@ -77,6 +79,145 @@ Eta uses Twig-inspired delimiters:
 {% if (it.user.isAdmin) { %}
   <p>Welcome, admin!</p>
 {% } %}
+```
+
+## Twig-like Syntax Support
+
+This fork includes Twig-inspired syntax for more familiar templating patterns alongside the existing JavaScript syntax:
+
+### ✨ For Loops
+
+**Simple Iteration:**
+```eta
+{% for item in items %}
+  <li>{{ item }}</li>
+{% endfor %}
+```
+
+**Key-Value Iteration:**
+```eta
+{% for key, value in data %}
+  <p>{{ key }}: {{ value }}</p>
+{% endfor %}
+```
+
+### 🔀 Conditionals
+
+**Basic If Statement:**
+```eta
+{% if it.user.isAdmin %}
+  <p>Admin Panel</p>
+{% endif %}
+```
+
+**If-Else:**
+```eta
+{% if it.user.isActive %}
+  <span>Active User</span>
+{% else %}
+  <span>Inactive User</span>
+{% endif %}
+```
+
+**If-Elsif-Else:**
+```eta
+{% if it.user.role === 'admin' %}
+  <p>Administrator</p>
+{% elsif it.user.role === 'moderator' %}
+  <p>Moderator</p>
+{% else %}
+  <p>Regular User</p>
+{% endif %}
+```
+
+### 🔧 Syntax Control
+
+```javascript
+const eta = new Eta();
+
+// Twig syntax is enabled by default
+eta.renderString('{% for item in items %}{{ item }}{% endfor %}', { items: ['a', 'b'] });
+
+// Disable Twig syntax if needed
+eta.disableTwigSyntax();
+
+// Re-enable Twig syntax
+eta.enableTwigSyntax();
+```
+
+### 🔄 Backward Compatibility
+
+Both syntaxes work seamlessly together:
+
+```eta
+<!-- Twig-style loops -->
+{% for item in items %}
+  <!-- JavaScript-style conditions -->
+  {% if (item.featured) { %}
+    <strong>{{ item.name }}</strong>
+  {% } else { %}
+    {{ item.name }}
+  {% } %}
+{% endfor %}
+```
+
+### 🎯 Complete Example
+
+Here's a comprehensive example combining Twig syntax with filters:
+
+```javascript
+const eta = new Eta();
+
+const template = `
+<div class="user-profile">
+  <h1>{{ it.user.name | upper }}</h1>
+
+  {% if it.user.isActive %}
+    <span class="badge active">{{ it.user.status | capitalize }}</span>
+  {% else %}
+    <span class="badge inactive">Inactive</span>
+  {% endif %}
+
+  <div class="stats">
+    <p>Posts: {{ it.user.posts | length }}</p>
+    <p>Joined: {{ it.user.joinDate | default('Unknown') }}</p>
+  </div>
+
+  {% if it.user.posts | length > 0 %}
+    <h2>Recent Posts</h2>
+    <ul>
+      {% for post in posts %}
+        <li>
+          <strong>{{ post.title | trim }}</strong>
+          <small>({{ post.views | default(0) }} views)</small>
+          {% if post.featured %}
+            <span class="featured">⭐ Featured</span>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No posts yet.</p>
+  {% endif %}
+</div>
+`;
+
+const result = eta.renderString(template, {
+  user: {
+    name: 'john doe',
+    isActive: true,
+    status: 'verified',
+    joinDate: '2024-01-15',
+    posts: [
+      { title: '  My First Post  ', views: 42, featured: true },
+      { title: 'Another Article', views: null, featured: false }
+    ]
+  },
+  posts: [
+    { title: '  My First Post  ', views: 42, featured: true },
+    { title: 'Another Article', views: null, featured: false }
+  ]
+});
 ```
 
 ## Twig-like Filters

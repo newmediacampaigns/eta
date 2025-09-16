@@ -11,6 +11,7 @@ import {
 } from "./render.ts";
 import { EtaError, RuntimeErr } from "./err.ts";
 import { TemplateFunction } from "./compile.ts";
+import { twigSyntaxPlugin } from "./twig-syntax.ts";
 
 /* TYPES */
 import type { EtaConfig } from "./config.ts";
@@ -23,6 +24,12 @@ export class Eta {
     } else {
       this.config = { ...defaultConfig };
     }
+
+    // Add Twig syntax plugin by default
+    if (!this.config.plugins.some(p => p === twigSyntaxPlugin)) {
+      this.config.plugins = [twigSyntaxPlugin, ...this.config.plugins];
+    }
+
     this.initBuiltinFilters();
   }
 
@@ -105,6 +112,17 @@ export class Eta {
       }
       return filterFunc(currentValue, ...filter.args);
     }, value);
+  }
+
+  // Twig syntax control
+  enableTwigSyntax(): void {
+    if (!this.config.plugins.some(p => p === twigSyntaxPlugin)) {
+      this.config.plugins = [twigSyntaxPlugin, ...this.config.plugins];
+    }
+  }
+
+  disableTwigSyntax(): void {
+    this.config.plugins = this.config.plugins.filter(p => p !== twigSyntaxPlugin);
   }
 
   private initBuiltinFilters(): void {
