@@ -2,7 +2,6 @@ import { XMLEscape } from "./utils.ts";
 
 /* TYPES */
 
-type trimConfig = "nl" | "slurp" | false;
 
 export interface Options {
   /** Compile to async function */
@@ -16,8 +15,8 @@ export interface EtaConfig {
   /** Apply a filter function defined on the class to every interpolation or raw interpolation */
   autoFilter: boolean;
 
-  /** Configure automatic whitespace trimming. Default `[false, 'nl']` */
-  autoTrim: trimConfig | [trimConfig, trimConfig];
+  /** Configure automatic whitespace trimming. Default false */
+  autoTrim: boolean;
 
 
 
@@ -54,8 +53,6 @@ export interface EtaConfig {
     }
   >;
 
-  /** Remove all safe-to-remove whitespace */
-  rmWhitespace: boolean;
 
   /** Delimiters: by default `['{%', '%}']` for tags/expressions */
   tags: [string, string];
@@ -76,7 +73,7 @@ export interface EtaConfig {
 const defaultConfig: EtaConfig = {
   autoEscape: true,
   autoFilter: false,
-  autoTrim: [false, "nl"],
+  autoTrim: false,
   debug: false,
   escapeFunction: XMLEscape,
   // default filter function (not used unless enables) just stringifies the input
@@ -88,7 +85,6 @@ const defaultConfig: EtaConfig = {
     raw: "~",
   },
   plugins: [],
-  rmWhitespace: false,
   tags: ["{%", "%}"],
   outputTags: ["{{", "}}"],
   useWith: false,

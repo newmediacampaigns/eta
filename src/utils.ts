@@ -10,48 +10,33 @@ export function trimWS(
   wsLeft: string | false,
   wsRight?: string | false,
 ): string {
-  let leftTrim;
-  let rightTrim;
+  let leftTrim = config.autoTrim;
+  let rightTrim = config.autoTrim;
 
-  if (Array.isArray(config.autoTrim)) {
-    // Slightly confusing,
-    // but _}} will trim the left side of the following string
-    leftTrim = config.autoTrim[1];
-    rightTrim = config.autoTrim[0];
-  } else {
-    leftTrim = rightTrim = config.autoTrim;
-  }
-
+  // Override with tag-specific trimming
   if (wsLeft || wsLeft === false) {
-    leftTrim = wsLeft;
+    leftTrim = wsLeft === "_" || wsLeft === "-";
   }
 
   if (wsRight || wsRight === false) {
-    rightTrim = wsRight;
+    rightTrim = wsRight === "_" || wsRight === "-";
   }
 
   if (!rightTrim && !leftTrim) {
     return str;
   }
 
-  if (leftTrim === "slurp" && rightTrim === "slurp") {
+  // Simple browser-optimized trimming
+  if (leftTrim && rightTrim) {
     return str.trim();
   }
 
-  if (leftTrim === "_" || leftTrim === "slurp") {
-    // full slurp
+  if (leftTrim) {
     str = str.trimStart();
-  } else if (leftTrim === "-" || leftTrim === "nl") {
-    // nl trim
-    str = str.replace(/^(?:\r\n|\n|\r)/, "");
   }
 
-  if (rightTrim === "_" || rightTrim === "slurp") {
-    // full slurp
+  if (rightTrim) {
     str = str.trimEnd();
-  } else if (rightTrim === "-" || rightTrim === "nl") {
-    // nl trim
-    str = str.replace(/(?:\r\n|\n|\r)$/, "");
   }
 
   return str;

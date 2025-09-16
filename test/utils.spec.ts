@@ -41,9 +41,9 @@ describe("Whitespace trim", () => {
   });
 
   describe("#trim", () => {
-    it("WS slurp both sides", () => {
+    it("WS trim both sides", () => {
       expect(
-        trimWS(" somestring  ", { ...defaultConfig, autoTrim: ["slurp", "slurp"] }, "", "")
+        trimWS(" somestring  ", { ...defaultConfig, autoTrim: true }, "_", "_")
       ).toBe("somestring");
     });
 
