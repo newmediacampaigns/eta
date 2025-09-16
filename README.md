@@ -40,16 +40,18 @@ Eta is a lightweight and blazing fast embedded JS templating engine optimized fo
 ### 🌟 Features
 
 - 📦 0 dependencies
-- 💡 Only ~2.5 KB minzipped (browser-optimized)
+- 💡 Only ~2.8 KB minzipped (browser-optimized)
 - ⚡️ Written in TypeScript
 - 🌐 **Browser-first design** with simplified APIs
 - 🚀 Super Fast
 - 🔧 Configurable
-  - Plugins, custom delimiters, caching
+  - Plugins, custom delimiters
+  - **Always-on caching** (no configuration needed)
 - 🔨 Powerful
   - Precompilation, **unified includes**, async support
   - **Layout support**!
   - **No @ prefix required** for template names
+  - **Simplified error handling** for browser environments
 - 🔥 Reliable
   - Better quotes/comments support
     - _ex._ `{{ someval + "string }}" }}` compiles correctly, while it fails with doT or EJS
@@ -83,7 +85,7 @@ _For more thorough documentation, visit [https://eta.js.org](https://eta.js.org)
 
 ### Browser Usage
 
-Eta is optimized for browser use with **only ~2.5KB** minified+gzipped:
+Eta is optimized for browser use with **only ~2.8KB** minified+gzipped:
 
 #### ✨ Browser-Optimized Features
 
@@ -92,7 +94,9 @@ This fork includes special optimizations for browser-only usage:
 - **🔗 Unified Include Directive**: No more `includeAsync` - just use `include()` for both sync and async templates
 - **📝 No @ Prefix Required**: Templates can be referenced by simple names like `"header"` instead of `"@header"`
 - **🔄 Backward Compatible**: Existing code with `@` prefixes still works
-- **📦 Smaller Bundle**: Removed server-side filesystem resolution code
+- **💾 Always-On Caching**: Templates are automatically cached - no configuration needed
+- **⚡ Simplified Errors**: Browser-optimized error handling without filepath dependencies
+- **📦 Smaller Bundle**: Removed server-side filesystem resolution and unnecessary features
 
 **ES Modules (Recommended):**
 ```html
@@ -112,6 +116,8 @@ This fork includes special optimizations for browser-only usage:
   
   const greeting = eta.render('greeting', { name: 'Alice', site: 'our site' });
   const page = eta.render('page', { content: 'Welcome!' });
+  
+  // Templates are automatically cached - no configuration needed!
 </script>
 ```
 
@@ -132,27 +138,6 @@ This fork includes special optimizations for browser-only usage:
 </script>
 ```
 
-### Node.js Usage
-
-Install Eta
-
-```bash
-npm install eta
-```
-
-```js
-import { Eta } from "eta";
-
-const eta = new Eta();
-
-// Direct template rendering
-const result = eta.renderString('Hi {{ it.name }}!', { name: 'Ben' });
-console.log(result); // Hi Ben!
-
-// Pre-load templates
-eta.loadTemplate('greeting', 'Hello {{ it.name }}!');
-const greeting = eta.render('greeting', { name: 'Alice' });
-```
 
 ## FAQs
 
@@ -169,14 +154,14 @@ Additionally, Eta is a letter of the Greek alphabet (it stands for all sorts of 
 
 <br />
 
-## Integrations
+## Browser Integrations
 
 <details>
   <summary>
     <b>Visual Studio Code</b>
   </summary>
 
-[@shadowtime2000](https://github.com/shadowtime2000) created [eta-vscode](https://marketplace.visualstudio.com/items?itemName=shadowtime2000.eta-vscode).
+[@shadowtime2000](https://github.com/shadowtime2000) created [eta-vscode](https://marketplace.visualstudio.com/items?itemName=shadowtime2000.eta-vscode) for syntax highlighting and template editing.
 
 </details>
 
@@ -194,51 +179,27 @@ Additionally, Eta is a letter of the Greek alphabet (it stands for all sorts of 
     <b>Webpack</b>
   </summary>
 
-Currently there is no official Webpack integration but [@clshortfuse](https://github.com/clshortfuse) shared the loader he uses:
+For Webpack integration in browser applications, you can use Eta templates as part of your build process:
 
 ```javascript
-{
-  loader: 'html-loader',
-  options: {
-    preprocessor(content, loaderContext) {
-      return eta.render(content, {}, { filename: loaderContext.resourcePath });
-    },
-  },
-}
+// Use Eta to process templates at build time
+import { Eta } from 'eta';
+
+const eta = new Eta();
+const template = eta.renderString(templateString, data);
 ```
-
-</details>
-  
-<details>
-  <summary>
-    <b>Node-RED</b>
-  </summary>
-
-To operate with Eta templates in Node-RED: [@ralphwetzel/node-red-contrib-eta](https://flows.nodered.org/node/@ralphwetzel/node-red-contrib-eta)
-
-  <img width="150" alt="image" src="https://user-images.githubusercontent.com/16342003/160198427-2a69ff10-e8bf-4873-9d99-2929a584ccc8.png">
-
-</details>
-
-<details>
-  <summary>
-    <b>Koa</b>
-  </summary>
-
-To render Eta templates in [Koa](https://koajs.com) web framework: [@cedx/koa-eta](https://github.com/cedx/koa-eta/wiki)
 
 </details>
 
 <br />
 
-## Projects using `eta`
+## Browser Projects using `eta`
 
-- [Docusaurus v2](https://v2.docusaurus.io): open-source documentation framework that uses Eta to generate a SSR build
-- [swagger-typescript-api](https://github.com/acacode/swagger-typescript-api): Open source typescript api codegenerator from Swagger. Uses Eta as codegenerator by templates
-- [html-bundler-webpack-plugin](https://github.com/webdiscus/html-bundler-webpack-plugin): Webpack plugin make easily to bundle HTML pages from templates, source styles and scripts
-- [SmartDeno](https://github.com/guildenstern70/SmartDeno): SmartDeno is an easy to setup web template using Deno & Oak
-- [stc](https://github.com/long-woo/stc): OpenAPI (Swagger) and Apifox documentation converted to api. Use eta templates to generate code.
-- [Add yours!](https://github.com/eta-dev/eta/edit/master/README.md)
+- [html-bundler-webpack-plugin](https://github.com/webdiscus/html-bundler-webpack-plugin): Webpack plugin to bundle HTML pages from templates, styles and scripts
+- Frontend applications using Eta for client-side template rendering
+- Browser-based code generators and dynamic content systems
+- Single-page applications (SPAs) with dynamic templating needs
+- [Add your browser project!](https://github.com/eta-dev/eta/edit/master/README.md)
 
 ## Contributors
 
@@ -275,5 +236,7 @@ This project follows the [all-contributors](https://github.com/kentcdodds/all-co
 
 ## Credits
 
-- Async support, file handling, and error formatting were based on code from [EJS](https://github.com/mde/ejs), which is licensed under the Apache-2.0 license. Code was modified and refactored to some extent.
-- Syntax and some parts of compilation are heavily based off EJS, Nunjucks, and doT.
+- Original Eta template engine by [Ben Gubler](https://github.com/nebrelbug) and contributors
+- Browser-specific optimizations: simplified APIs, removed filesystem dependencies, always-on caching
+- Syntax and compilation approach based on EJS, Nunjucks, and doT
+- Error handling optimized for browser environments with developer-friendly messages
