@@ -1,6 +1,5 @@
 /* TYPES */
 
-import type { Options } from "./config.ts";
 import type { AstObject } from "./parse.ts";
 import type { Eta } from "./core.ts";
 
@@ -13,18 +12,14 @@ import type { Eta } from "./core.ts";
 export function compileToString(
   this: Eta,
   str: string,
-  options?: Partial<Options>,
 ): string {
   const config = this.config;
-  const isAsync = options && options.async;
-
   const compileBody = this.compileBody;
-
   const buffer: Array<AstObject> = this.parse.call(this, str);
 
   // note: when the include function passes through options
   let res = `${config.functionHeader}
-let include = (template, data) => ${isAsync ? "this.renderAsync" : "this.render"}(template, data, options);
+let include = (template, data) => this.render(template, data, options);
 
 let __eta = {res: "", e: this.config.escapeFunction, f: this.config.filterFunction${
     config.debug
@@ -43,9 +38,7 @@ function layout(path, data) {
 
 ${compileBody.call(this, buffer)}
 if (__eta.layout) {
-  __eta.res = ${
-    isAsync ? "await " : ""
-  }include (__eta.layout, {...${config.varName}, body: __eta.res, ...__eta.layoutData});
+  __eta.res = include (__eta.layout, {...${config.varName}, body: __eta.res, ...__eta.layoutData});
 }
 ${config.useWith ? "}" : ""}${
     config.debug

@@ -4,8 +4,7 @@ import { XMLEscape } from "./utils.ts";
 
 
 export interface Options {
-  /** Compile to async function */
-  async?: boolean;
+  // No options currently needed - placeholder for future options
 }
 
 export interface EtaConfig {

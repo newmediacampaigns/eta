@@ -30,7 +30,7 @@ describe("render caching", () => {
   it("Simple template caches", () => {
     expect(eta.render("@template1", { name: "Ada Lovelace" })).toEqual("Hi Ada Lovelace");
 
-    expect(eta.templatesSync.get("@template1")).toBeTruthy();
+    expect(eta.templates.get("@template1")).toBeTruthy();
   });
 
   it("throws if template doesn't exist", () => {
@@ -51,53 +51,16 @@ describe("useWith", () => {
   });
 });
 
-function resolveAfter2Seconds(val: string): Promise<string> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(val);
-    }, 20);
-  });
-}
-
-async function asyncTest() {
-  const result = await resolveAfter2Seconds("HI FROM ASYNC");
-  return result;
-}
-
-describe("async", () => {
-  const eta = new Eta();
-
-  it("compiles asynchronously", async () => {
-    expect(await eta.renderStringAsync("Hi {{ it.name }}", { name: "Ada Lovelace" })).toEqual(
-      "Hi Ada Lovelace"
-    );
-  });
-
-  it("async function works", async () => {
-    expect(
-      await eta.renderStringAsync("{{ await it.asyncTest() }}", {
-        asyncTest: asyncTest,
-      })
-    ).toEqual("HI FROM ASYNC");
-  });
-
-  it("Async template w/ syntax error throws", async () => {
-    await expect(async () => {
-      await eta.renderStringAsync("{{ @#$%^ }}", {});
-    }).rejects.toThrow();
-  });
-});
-
 describe("layouts", () => {
   const eta = new Eta();
 
-  it("Layouts are called with arguments if they're provided", async () => {
+  it("Layouts are called with arguments if they're provided", () => {
     eta.loadTemplate(
       "@my-layout",
       `{{ it.title }} - {%~ it.body %} - {%~ it.content %} - {%~ it.randomNum %}`
     );
 
-    const res = await eta.renderString(
+    const res = eta.renderString(
       `{% layout("@my-layout", { title: 'Nifty title', content: 'Nice content'}) %}This is a layout`,
       { title: "Cool Title", randomNum: 3 }
     );

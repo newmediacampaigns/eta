@@ -3,12 +3,7 @@ import { compile } from "./compile.ts";
 import { compileBody, compileToString } from "./compile-string.ts";
 import { defaultConfig } from "./config.ts";
 import { parse } from "./parse.ts";
-import {
-  render,
-  renderAsync,
-  renderString,
-  renderStringAsync,
-} from "./render.ts";
+import { render, renderString } from "./render.ts";
 import { EtaError, RuntimeErr } from "./err.ts";
 import { TemplateFunction } from "./compile.ts";
 
@@ -36,12 +31,9 @@ export class Eta {
   compileBody = compileBody;
   parse = parse;
   render = render;
-  renderAsync = renderAsync;
   renderString = renderString;
-  renderStringAsync = renderStringAsync;
 
-  templatesSync: Cacher<TemplateFunction> = new Cacher<TemplateFunction>({});
-  templatesAsync: Cacher<TemplateFunction> = new Cacher<TemplateFunction>({});
+  templates: Cacher<TemplateFunction> = new Cacher<TemplateFunction>({});
 
   // Filter registry
   filters: Map<string, Function> = new Map();
@@ -58,26 +50,12 @@ export class Eta {
 
   loadTemplate(
     name: string,
-    template: string | TemplateFunction, // template string or template function
-    options?: { async: boolean },
+    template: string | TemplateFunction,
   ): void {
     if (typeof template === "string") {
-      const templates = options && options.async
-        ? this.templatesAsync
-        : this.templatesSync;
-
-      templates.define(name, this.compile(template, options));
+      this.templates.define(name, this.compile(template));
     } else {
-      let templates = this.templatesSync;
-
-      if (
-        template.constructor.name === "AsyncFunction" ||
-        (options && options.async)
-      ) {
-        templates = this.templatesAsync;
-      }
-
-      templates.define(name, template);
+      this.templates.define(name, template);
     }
   }
 
