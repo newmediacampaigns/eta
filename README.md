@@ -167,19 +167,22 @@ This fork includes Twig-inspired syntax for more familiar templating patterns al
 {% endif %}
 ```
 
-### 🔧 Syntax Control
+### 💬 Comments
 
-```javascript
-const eta = new Eta();
+**Twig-style Comments (Single & Multi-line):**
+```eta
+{# This is a single-line comment #}
 
-// Twig syntax is enabled by default
-eta.renderString('{% for item in items %}{{ item }}{% endfor %}', { items: ['a', 'b'] });
+{#
+  This is a multi-line comment
+  that can span multiple lines
+  and won't appear in output
+#}
 
-// Disable Twig syntax if needed
-eta.disableTwigSyntax();
+Hello {# inline comment #} World
+<!-- Outputs: Hello  World -->
 
-// Re-enable Twig syntax
-eta.enableTwigSyntax();
+{# Comments can contain {{ variables }} and {% code %} that won't be processed #}
 ```
 
 ### 🔄 Backward Compatibility

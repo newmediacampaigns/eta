@@ -264,4 +264,57 @@ describe("Basic Twig-like Syntax Support", () => {
     });
   });
 
+  describe("Twig Comments", () => {
+    it("supports single-line Twig comments", () => {
+      const template = `
+        Hello {# This is a comment #} World
+      `;
+
+      const result = eta.renderString(template, {}) as string;
+      expect(result.trim()).toBe("Hello  World");
+    });
+
+    it("supports multi-line Twig comments", () => {
+      const template = `
+        Start
+        {# This is a
+           multi-line
+           comment #}
+        End
+      `;
+
+      const result = eta.renderString(template, {}) as string;
+      expect(result).toContain("Start");
+      expect(result).toContain("End");
+      expect(result).not.toContain("multi-line");
+      expect(result).not.toContain("comment");
+    });
+
+    it("handles comments with template code inside", () => {
+      const template = `
+        {# {{ it.name }} and {% if true %} should not render #}
+        {{ it.greeting }}
+      `;
+
+      const result = eta.renderString(template, {
+        name: "John",
+        greeting: "Hello"
+      }) as string;
+      expect(result).toContain("Hello");
+      expect(result).not.toContain("John");
+      expect(result).not.toContain("should not render");
+    });
+
+    it("handles nested braces in comments", () => {
+      const template = `
+        {# This comment has {braces} and {{double braces}} #}
+        Success
+      `;
+
+      const result = eta.renderString(template, {}) as string;
+      expect(result).toContain("Success");
+      expect(result).not.toContain("braces");
+    });
+  });
+
 });

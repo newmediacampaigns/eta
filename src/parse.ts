@@ -111,16 +111,18 @@ export function parse(this: Eta, str: string): Array<AstObject> {
   // Hard-coded prefixes: exec="", interpolate="=", raw="~"
   const prefixes = "=|~";
 
-  // Hard-coded regex for {% %} and {{ }} tags
+  // Hard-coded regex for {% %}, {{ }}, and {# #} tags
   const parseOpenReg = new RegExp(
     "(\\{%(-|_)?\\s*(" + prefixes + ")?\\s*)" +
-    "|(\\{\\{(-|_)?\\s*)",
+    "|(\\{\\{(-|_)?\\s*)" +
+    "|(\\{#)",
     "g",
   );
 
   const parseCloseReg = new RegExp(
     "'|\"|`|\\/\\*|(\\s*(-|_)?%\\})" +
-    "|(\\s*(-|_)?\\}\\})",
+    "|(\\s*(-|_)?\\}\\})" +
+    "|(#\\})",
     "g",
   );
 
@@ -131,11 +133,23 @@ export function parse(this: Eta, str: string): Array<AstObject> {
 
     lastIndex = m[0].length + m.index;
 
-    // Determine if this is a tag block {% %} or output block {{ }}
+    // Determine tag type: {% %}, {{ }}, or {# #}
     const isOutputTag = m[4] !== undefined; // {{ }} match group
+    const isCommentTag = m[6] !== undefined; // {# #} match group
     const prefix = isOutputTag ? "=" : (m[3] || ""); // output tags default to interpolation, tag blocks use prefix
 
     pushString(precedingString);
+
+    // Handle comments by skipping to the comment close
+    if (isCommentTag) {
+      const commentCloseIndex = str.indexOf("#}", lastIndex);
+      if (commentCloseIndex === -1) {
+        ParseErr("unclosed comment", str, m.index);
+      }
+      lastIndex = commentCloseIndex + 2; // Skip past #}
+      parseOpenReg.lastIndex = lastIndex;
+      continue; // Skip to next iteration, don't add comment to AST
+    }
 
     parseCloseReg.lastIndex = lastIndex;
     let closeTag;
