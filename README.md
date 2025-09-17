@@ -101,6 +101,21 @@ This fork includes Twig-inspired syntax for more familiar templating patterns al
 {% endfor %}
 ```
 
+**Complex Expressions:**
+```eta
+{% for pagenum in it.middle %}
+  <span>Page {{ pagenum }}</span>
+{% endfor %}
+
+{% for item in it.getPages() %}
+  <div>{{ item }}</div>
+{% endfor %}
+
+{% for page in it.pages %}
+  <li>{{ page.title }}</li>
+{% endfor %}
+```
+
 ### 🔀 Conditionals
 
 **Basic If Statement:**

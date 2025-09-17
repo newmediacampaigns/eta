@@ -33,6 +33,49 @@ describe("Basic Twig-like Syntax Support", () => {
       expect(result).toContain('<p>name: John</p>');
       expect(result).toContain('<p>age: 30</p>');
     });
+
+    it("handles complex expressions in for loops", () => {
+      const template1 = `
+        {% for pagenum in it.middle %}
+          <span>{{ pagenum }}</span>
+        {% endfor %}
+      `;
+
+      const result1 = eta.renderString(template1, {
+        middle: [1, 2, 3]
+      }) as string;
+      expect(result1).toContain('<span>1</span>');
+      expect(result1).toContain('<span>2</span>');
+      expect(result1).toContain('<span>3</span>');
+
+      const template2 = `
+        {% for item in it.getPages() %}
+          <div>{{ item }}</div>
+        {% endfor %}
+      `;
+
+      const result2 = eta.renderString(template2, {
+        getPages: () => ['home', 'about', 'contact']
+      }) as string;
+      expect(result2).toContain('<div>home</div>');
+      expect(result2).toContain('<div>about</div>');
+      expect(result2).toContain('<div>contact</div>');
+
+      const template3 = `
+        {% for page in it.pages %}
+          <li>{{ page.title }}</li>
+        {% endfor %}
+      `;
+
+      const result3 = eta.renderString(template3, {
+        pages: [
+          { title: 'Home' },
+          { title: 'About' }
+        ]
+      }) as string;
+      expect(result3).toContain('<li>Home</li>');
+      expect(result3).toContain('<li>About</li>');
+    });
   });
 
   describe("If/Else Syntax", () => {
@@ -168,6 +211,20 @@ describe("Basic Twig-like Syntax Support", () => {
       const input = "{% for key, value in data %}{{ key }}: {{ value }}{% endfor %}";
       const output = transformTwigSyntax(input);
       expect(output).toBe("{% for (let [key, value] of Object.entries(it.data)) { %}{{ key }}: {{ value }}{% } %}");
+    });
+
+    it("handles complex expressions in for loop transformations", () => {
+      const input1 = "{% for pagenum in it.middle %}{{ pagenum }}{% endfor %}";
+      const output1 = transformTwigSyntax(input1);
+      expect(output1).toBe("{% for (let pagenum of it.middle) { %}{{ pagenum }}{% } %}");
+
+      const input2 = "{% for item in it.getPages() %}{{ item }}{% endfor %}";
+      const output2 = transformTwigSyntax(input2);
+      expect(output2).toBe("{% for (let item of it.getPages()) { %}{{ item }}{% } %}");
+
+      const input3 = "{% for key, value in it.data %}{{ key }}{% endfor %}";
+      const output3 = transformTwigSyntax(input3);
+      expect(output3).toBe("{% for (let [key, value] of Object.entries(it.data)) { %}{{ key }}{% } %}");
     });
 
     it("transforms if statements correctly", () => {
