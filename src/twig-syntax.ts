@@ -41,16 +41,28 @@ function transformForLoops(template: string): string {
  * {% endif %} → {% } %}
  */
 function transformIfStatements(template: string): string {
-  // Only transform Twig-style if statements (not JavaScript syntax)
-  // Skip if the condition already has parentheses and curly braces
-  template = template.replace(/\{\%\s*if\s+(?!\()([^%{]+?)(?!\s*\{\s*)\s*\%\}/g, (_, condition) => {
+  // Transform Twig-style if statements to JavaScript
+  // Allow parentheses and compound expressions in conditions
+  template = template.replace(/\{\%\s*if\s+([^%]+?)\s*\%\}/g, (match, condition) => {
     const cleanCondition = condition.trim();
+
+    // Skip if this is already JavaScript syntax (has opening brace)
+    if (cleanCondition.endsWith('{')) {
+      return match; // Return unchanged
+    }
+
     return `{% if (${cleanCondition}) { %}`;
   });
 
   // Transform elsif statements (Twig uses elsif, not elseif)
-  template = template.replace(/\{\%\s*elsif\s+(?!\()([^%{]+?)(?!\s*\{\s*)\s*\%\}/g, (_, condition) => {
+  template = template.replace(/\{\%\s*elsif\s+([^%]+?)\s*\%\}/g, (match, condition) => {
     const cleanCondition = condition.trim();
+
+    // Skip if this is already JavaScript syntax (has opening brace)
+    if (cleanCondition.endsWith('{')) {
+      return match; // Return unchanged
+    }
+
     return `{% } else if (${cleanCondition}) { %}`;
   });
 

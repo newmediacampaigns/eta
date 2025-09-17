@@ -130,6 +130,28 @@ This fork includes Twig-inspired syntax for more familiar templating patterns al
 {% endif %}
 ```
 
+**Compound Expressions:**
+```eta
+{% if (it.user.isActive && it.user.role === 'admin') || it.user.isSuperUser %}
+  <p>Admin Access Granted</p>
+{% elsif it.user.isActive && (it.user.role === 'moderator' || it.user.role === 'editor') %}
+  <p>Staff Access Granted</p>
+{% else %}
+  <p>Regular Access</p>
+{% endif %}
+```
+
+**Function Calls:**
+```eta
+{% if it.user.hasMethod() || it.user.isAdmin() %}
+  <p>Permission Granted</p>
+{% elsif it.items.length > 0 && it.hasPermission('view') %}
+  <p>Content Available</p>
+{% else %}
+  <p>No Access</p>
+{% endif %}
+```
+
 ### 🔧 Syntax Control
 
 ```javascript

@@ -86,6 +86,75 @@ describe("Basic Twig-like Syntax Support", () => {
       const result3 = eta.renderString(template, { user: { role: 'viewer' } }) as string;
       expect(result3).toContain('<p>User</p>');
     });
+
+    it("handles compound expressions in templates", () => {
+      const template = `
+        {% if (it.user.isActive && it.user.role === 'admin') || it.user.isSuperUser %}
+          <p>Admin Access</p>
+        {% elsif it.user.isActive && (it.user.role === 'moderator' || it.user.role === 'editor') %}
+          <p>Staff Access</p>
+        {% else %}
+          <p>Regular Access</p>
+        {% endif %}
+      `;
+
+      const result1 = eta.renderString(template, {
+        user: { isActive: true, role: 'admin', isSuperUser: false }
+      }) as string;
+      expect(result1).toContain('<p>Admin Access</p>');
+
+      const result2 = eta.renderString(template, {
+        user: { isActive: false, role: 'admin', isSuperUser: true }
+      }) as string;
+      expect(result2).toContain('<p>Admin Access</p>');
+
+      const result3 = eta.renderString(template, {
+        user: { isActive: true, role: 'moderator', isSuperUser: false }
+      }) as string;
+      expect(result3).toContain('<p>Staff Access</p>');
+
+      const result4 = eta.renderString(template, {
+        user: { isActive: false, role: 'user', isSuperUser: false }
+      }) as string;
+      expect(result4).toContain('<p>Regular Access</p>');
+    });
+
+    it("handles function calls in compound expressions", () => {
+      const template = `
+        {% if it.user.hasMethod() || it.user.isAdmin() %}
+          <p>Access Granted</p>
+        {% else %}
+          <p>Access Denied</p>
+        {% endif %}
+      `;
+
+      // Test with function that returns true
+      const result1 = eta.renderString(template, {
+        user: {
+          hasMethod: () => true,
+          isAdmin: () => false
+        }
+      }) as string;
+      expect(result1).toContain('<p>Access Granted</p>');
+
+      // Test with function that returns false, but isAdmin returns true
+      const result2 = eta.renderString(template, {
+        user: {
+          hasMethod: () => false,
+          isAdmin: () => true
+        }
+      }) as string;
+      expect(result2).toContain('<p>Access Granted</p>');
+
+      // Test with both functions returning false
+      const result3 = eta.renderString(template, {
+        user: {
+          hasMethod: () => false,
+          isAdmin: () => false
+        }
+      }) as string;
+      expect(result3).toContain('<p>Access Denied</p>');
+    });
   });
 
   describe("Transformation Function", () => {
@@ -111,6 +180,30 @@ describe("Basic Twig-like Syntax Support", () => {
       const input = "{% if a %}A{% elsif b %}B{% else %}C{% endif %}";
       const output = transformTwigSyntax(input);
       expect(output).toBe("{% if (a) { %}A{% } else if (b) { %}B{% } else { %}C{% } %}");
+    });
+
+    it("handles compound expressions with parentheses", () => {
+      const input = "{% if (foo && bar) || xyz %}yes{% endif %}";
+      const output = transformTwigSyntax(input);
+      expect(output).toBe("{% if ((foo && bar) || xyz) { %}yes{% } %}");
+    });
+
+    it("handles complex boolean expressions", () => {
+      const input = "{% if it.user.isActive && (it.user.role === 'admin' || it.user.role === 'moderator') %}admin panel{% endif %}";
+      const output = transformTwigSyntax(input);
+      expect(output).toBe("{% if (it.user.isActive && (it.user.role === 'admin' || it.user.role === 'moderator')) { %}admin panel{% } %}");
+    });
+
+    it("handles function calls and method chaining", () => {
+      const input = "{% if it.items.length > 0 && it.hasPermission('view') %}show items{% endif %}";
+      const output = transformTwigSyntax(input);
+      expect(output).toBe("{% if (it.items.length > 0 && it.hasPermission('view')) { %}show items{% } %}");
+    });
+
+    it("handles compound expressions with function calls", () => {
+      const input = "{% if foo.hasMethod() || foo.isAdmin() %}access granted{% endif %}";
+      const output = transformTwigSyntax(input);
+      expect(output).toBe("{% if (foo.hasMethod() || foo.isAdmin()) { %}access granted{% } %}");
     });
   });
 
