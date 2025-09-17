@@ -40,7 +40,7 @@ Eta is a lightweight and blazing fast embedded JS templating engine optimized fo
 ### 🌟 Features
 
 - 📦 0 dependencies
-- 💡 Only ~2.8 KB minzipped (browser-optimized)
+- 💡 Only ~4.3 KB minzipped (browser-optimized)
 - ⚡️ Written in TypeScript
 - 🌐 **Browser-first design** with simplified APIs
 - 🚀 Super Fast
@@ -411,7 +411,7 @@ _For more thorough documentation, visit [https://eta.js.org](https://eta.js.org)
 
 ### Browser Usage
 
-Eta is optimized for browser use with **only ~2.8KB** minified+gzipped:
+Eta is optimized for browser use with **only ~4.3KB** minified+gzipped:
 
 #### ✨ Browser-Optimized Features
 
