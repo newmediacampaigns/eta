@@ -10,13 +10,13 @@ describe("basic functionality", () => {
       "Hi Ada Lovelace"
     );
   });
-  it("renderString: string trimming", () => {
-    expect(eta.renderString("Hi \n{%- =it.name_%}  !", { name: "Ada Lovelace" })).toEqual(
+  it("renderString: basic interpolation", () => {
+    expect(eta.renderString("Hi {{ it.name }}!", { name: "Ada Lovelace" })).toEqual(
       "Hi Ada Lovelace!"
     );
   });
   it("render: passing in a template function", () => {
-    expect(eta.render(eta.compile("Hi \n{%- =it.name_%}  !"), { name: "Ada Lovelace" })).toEqual(
+    expect(eta.render(eta.compile("Hi {{ it.name }}!"), { name: "Ada Lovelace" })).toEqual(
       "Hi Ada Lovelace!"
     );
   });
@@ -98,8 +98,7 @@ describe("layouts", () => {
     );
 
     const res = await eta.renderString(
-      `{%- layout("@my-layout", { title: 'Nifty title', content: 'Nice content'}) -%}
-This is a layout`,
+      `{% layout("@my-layout", { title: 'Nifty title', content: 'Nice content'}) %}This is a layout`,
       { title: "Cool Title", randomNum: 3 }
     );
 

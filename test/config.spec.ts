@@ -3,9 +3,9 @@
 import { Eta } from "../src/index";
 
 describe("Config Tests", () => {
-  it("custom tags", () => {
-    const eta = new Eta({ tags: ["<<", ">>"] });
-    const res = eta.renderString("hi <<= it.name >>", { name: "Ben" });
+  it("default tags work", () => {
+    const eta = new Eta();
+    const res = eta.renderString("hi {{ it.name }}", { name: "Ben" });
     expect(res).toEqual("hi Ben");
   });
 
@@ -59,25 +59,25 @@ describe("Config Tests", () => {
     const eta = new Eta();
 
     const res = eta
-      .withConfig({ tags: ["{{", "}}"] })
-      .renderString("{{= it.name }}", { name: "John Appleseed" });
+      .withConfig({ autoEscape: false })
+      .renderString("{{ it.html }}", { html: "<p>Test</p>" });
 
-    expect(res).toEqual("John Appleseed");
+    expect(res).toEqual("<p>Test</p>");
 
-    // the original tags should remain unchanged
-    expect(eta.config.tags).toEqual(["{%", "%}"]);
+    // the original config should remain unchanged
+    expect(eta.config.autoEscape).toEqual(true);
   });
 
   it("configure", () => {
     const eta = new Eta();
 
-    eta.configure({ tags: ["{{", "}}"] });
+    eta.configure({ autoEscape: false });
 
-    const res = eta.renderString("{{= it.name }}", { name: "John Appleseed" });
+    const res = eta.renderString("{{ it.html }}", { html: "<p>Test</p>" });
 
-    expect(res).toEqual("John Appleseed");
+    expect(res).toEqual("<p>Test</p>");
 
-    // the original tags should have changed
-    expect(eta.config.tags).toEqual(["{{", "}}"]);
+    // the original config should have changed
+    expect(eta.config.autoEscape).toEqual(false);
   });
 });

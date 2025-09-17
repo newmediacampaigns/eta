@@ -57,8 +57,8 @@ return __eta.res;
 `);
   });
 
-  it("works with whitespace trimming", () => {
-    const str = eta.compileToString("hi\n{%- = it.firstname-%}\n{%_ = it.lastname_%}");
+  it("works with basic interpolation", () => {
+    const str = eta.compileToString("hi {{ it.firstname }} {{ it.lastname }}");
     expect(str).toEqual(`
 let include = (template, data) => this.render(template, data, options);
 
@@ -69,8 +69,9 @@ function layout(path, data) {
   __eta.layoutData = data;
 }
 
-__eta.res+='hi'
+__eta.res+='hi '
 __eta.res+=__eta.e(it.firstname)
+__eta.res+=' '
 __eta.res+=__eta.e(it.lastname)
 
 if (__eta.layout) {

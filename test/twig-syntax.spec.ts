@@ -264,27 +264,4 @@ describe("Basic Twig-like Syntax Support", () => {
     });
   });
 
-  describe("Twig Syntax Control", () => {
-    it("allows disabling Twig syntax", () => {
-      const customEta = new Eta();
-      customEta.disableTwigSyntax();
-
-      const template = "{% for item in items %}{{ item }}{% endfor %}";
-
-      // Should not transform Twig syntax when disabled
-      expect(() => {
-        customEta.renderString(template, { items: ['a'] });
-      }).toThrow(); // Will throw because "for item in items" is not valid JS
-    });
-
-    it("allows re-enabling Twig syntax", () => {
-      const customEta = new Eta();
-      customEta.disableTwigSyntax();
-      customEta.enableTwigSyntax();
-
-      const template = "{% for item in items %}{{ item }}{% endfor %}";
-      const result = customEta.renderString(template, { items: ['test'] }) as string;
-      expect(result).toContain('test');
-    });
-  });
 });

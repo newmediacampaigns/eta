@@ -1,5 +1,5 @@
 import { ParseErr } from "./err.ts";
-import { trimWS } from "./utils.ts";
+import { transformTwigSyntax } from "./twig-syntax.ts";
 
 /* TYPES */
 
@@ -25,12 +25,6 @@ const singleQuoteReg = /'(?:\\[\s\w"'\\`]|[^\n\r'\\])*?'/g;
 
 const doubleQuoteReg = /"(?:\\[\s\w"'\\`]|[^\n\r"\\])*?"/g;
 
-/** Escape special regular expression characters inside a string */
-
-function escapeRegExp(string: string) {
-  // From MDN
-  return string.replace(/[.*+\-?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
-}
 
 function getLineNo(str: string, index: number) {
   return str.slice(0, index).split("\n").length;
@@ -93,75 +87,40 @@ export function parse(this: Eta, str: string): Array<AstObject> {
   const config = this.config;
 
   let buffer: Array<AstObject> = [];
-  let trimLeftOfNextStr: string | false = false;
   let lastIndex = 0;
-  const parseOptions = config.parse;
 
-  if (config.plugins) {
-    for (let i = 0; i < config.plugins.length; i++) {
-      const plugin = config.plugins[i];
-      if (plugin.processTemplate) {
-        str = plugin.processTemplate(str, config);
-      }
-    }
-  }
+  // Transform Twig syntax to JavaScript
+  str = transformTwigSyntax(str);
 
 
   templateLitReg.lastIndex = 0;
   singleQuoteReg.lastIndex = 0;
   doubleQuoteReg.lastIndex = 0;
 
-  function pushString(strng: string, shouldTrimRightOfString?: string | false) {
+  function pushString(strng: string) {
     if (strng) {
-      // if string is truthy it must be of type 'string'
+      // replace \ with \\, ' with \'
+      // we're going to convert all CRLF to LF so it doesn't take more than one replace
 
-      strng = trimWS(
-        strng,
-        config,
-        trimLeftOfNextStr, // this will only be false on the first str, the next ones will be null or undefined
-        shouldTrimRightOfString,
-      );
+      strng = strng.replace(/\\|'/g, "\\$&").replace(/\r\n|\n|\r/g, "\\n");
 
-      if (strng) {
-        // replace \ with \\, ' with \'
-        // we're going to convert all CRLF to LF so it doesn't take more than one replace
-
-        strng = strng.replace(/\\|'/g, "\\$&").replace(/\r\n|\n|\r/g, "\\n");
-
-        buffer.push(strng);
-      }
+      buffer.push(strng);
     }
   }
 
-  const prefixes = [
-    parseOptions.exec,
-    parseOptions.interpolate,
-    parseOptions.raw,
-  ].reduce(function (
-    accumulator,
-    prefix,
-  ) {
-    if (accumulator && prefix) {
-      return accumulator + "|" + escapeRegExp(prefix);
-    } else if (prefix) {
-      // accumulator is falsy
-      return escapeRegExp(prefix);
-    } else {
-      // prefix and accumulator are both falsy
-      return accumulator;
-    }
-  }, "");
+  // Hard-coded prefixes: exec="", interpolate="=", raw="~"
+  const prefixes = "=|~";
 
-  // Create regex for both tag types: {% %} for expressions/code and {{ }} for output
+  // Hard-coded regex for {% %} and {{ }} tags
   const parseOpenReg = new RegExp(
-    "(" + escapeRegExp(config.tags[0]) + "(-|_)?\\s*(" + prefixes + ")?\\s*)" + 
-    "|(" + escapeRegExp(config.outputTags[0]) + "(-|_)?\\s*)",
+    "(\\{%(-|_)?\\s*(" + prefixes + ")?\\s*)" +
+    "|(\\{\\{(-|_)?\\s*)",
     "g",
   );
 
   const parseCloseReg = new RegExp(
-    "'|\"|`|\\/\\*|(\\s*(-|_)?" + escapeRegExp(config.tags[1]) + ")" +
-    "|(\\s*(-|_)?" + escapeRegExp(config.outputTags[1]) + ")",
+    "'|\"|`|\\/\\*|(\\s*(-|_)?%\\})" +
+    "|(\\s*(-|_)?\\}\\})",
     "g",
   );
 
@@ -174,10 +133,9 @@ export function parse(this: Eta, str: string): Array<AstObject> {
 
     // Determine if this is a tag block {% %} or output block {{ }}
     const isOutputTag = m[4] !== undefined; // {{ }} match group
-    const wsLeft = isOutputTag ? m[5] : m[2]; // whitespace trimming
     const prefix = isOutputTag ? "=" : (m[3] || ""); // output tags default to interpolation, tag blocks use prefix
 
-    pushString(precedingString, wsLeft);
+    pushString(precedingString);
 
     parseCloseReg.lastIndex = lastIndex;
     let closeTag;
@@ -189,13 +147,11 @@ export function parse(this: Eta, str: string): Array<AstObject> {
 
         parseOpenReg.lastIndex = lastIndex = parseCloseReg.lastIndex;
 
-        trimLeftOfNextStr = closeTag[2] || closeTag[4];
-
-        const currentType: TagType = prefix === parseOptions.exec
+        const currentType: TagType = prefix === ""
           ? "e"
-          : prefix === parseOptions.raw
+          : prefix === "~"
           ? "r"
-          : prefix === parseOptions.interpolate
+          : prefix === "="
           ? "i"
           : "";
 
@@ -259,16 +215,7 @@ export function parse(this: Eta, str: string): Array<AstObject> {
     }
   }
 
-  pushString(str.slice(lastIndex, str.length), false);
-
-  if (config.plugins) {
-    for (let i = 0; i < config.plugins.length; i++) {
-      const plugin = config.plugins[i];
-      if (plugin.processAST) {
-        buffer = plugin.processAST(buffer, config);
-      }
-    }
-  }
+  pushString(str.slice(lastIndex, str.length));
 
   return buffer;
 }

@@ -1,13 +1,8 @@
-import type { EtaConfig } from "./config.ts";
 
 /**
  * Simple Twig-like syntax preprocessor
  * Transforms basic Twig syntax to JavaScript before parsing
  */
-
-export interface TwigSyntaxPlugin {
-  processTemplate: (template: string, config: EtaConfig) => string;
-}
 
 /**
  * Determines if we should add "it." prefix to an expression
@@ -122,9 +117,3 @@ export function transformTwigSyntax(template: string): string {
   return transformed;
 }
 
-/**
- * Plugin object for use with Eta
- */
-export const twigSyntaxPlugin: TwigSyntaxPlugin = {
-  processTemplate: transformTwigSyntax
-};

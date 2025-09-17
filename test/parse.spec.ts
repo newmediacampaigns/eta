@@ -22,9 +22,9 @@ describe("parse test", () => {
     expect(buff).toEqual(["hi ", { val: "hey", t: "r" }]);
   });
 
-  it("works with whitespace trimming", () => {
-    const buff = eta.parse("hi\n{%- = hey-%} {%_ = hi _%}");
-    expect(buff).toEqual(["hi", { val: "hey", t: "i" }, { val: "hi", t: "i" }]);
+  it("parses basic interpolation", () => {
+    const buff = eta.parse("hi {{ hey }} there");
+    expect(buff).toEqual(["hi ", { val: "hey", t: "i", filters: undefined }, " there"]);
   });
 
   it("works with multiline comments", () => {

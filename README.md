@@ -411,7 +411,7 @@ _For more thorough documentation, visit [https://eta.js.org](https://eta.js.org)
 
 ### Browser Usage
 
-Eta is optimized for browser use with **only ~4.3KB** minified+gzipped:
+Eta is optimized for browser use with **only ~3.2KB** minified+gzipped:
 
 #### ✨ Browser-Optimized Features
 

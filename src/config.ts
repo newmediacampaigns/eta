@@ -15,8 +15,6 @@ export interface EtaConfig {
   /** Apply a filter function defined on the class to every interpolation or raw interpolation */
   autoFilter: boolean;
 
-  /** Configure automatic whitespace trimming. Default false */
-  autoTrim: boolean;
 
 
 
@@ -32,33 +30,6 @@ export interface EtaConfig {
   /** Raw JS code inserted in the template function. Useful for declaring global variables for user templates */
   functionHeader: string;
 
-  /** Parsing options */
-  parse: {
-    /** Which prefix to use for evaluation. Default `""`, does not support `"-"` or `"_"` */
-    exec: string;
-
-    /** Which prefix to use for interpolation. Default `"="`, does not support `"-"` or `"_"` */
-    interpolate: string;
-
-    /** Which prefix to use for raw interpolation. Default `"~"`, does not support `"-"` or `"_"` */
-    raw: string;
-  };
-
-  /** Array of plugins */
-  plugins: Array<
-    {
-      processFnString?: Function;
-      processAST?: Function;
-      processTemplate?: Function;
-    }
-  >;
-
-
-  /** Delimiters: by default `['{%', '%}']` for tags/expressions */
-  tags: [string, string];
-
-  /** Output delimiters: by default `['{{', '}}']` for interpolation */
-  outputTags: [string, string];
 
   /** Make data available on the global object instead of varName */
   useWith: boolean;
@@ -73,20 +44,11 @@ export interface EtaConfig {
 const defaultConfig: EtaConfig = {
   autoEscape: true,
   autoFilter: false,
-  autoTrim: false,
   debug: false,
   escapeFunction: XMLEscape,
   // default filter function (not used unless enables) just stringifies the input
   filterFunction: (val) => String(val),
   functionHeader: "",
-  parse: {
-    exec: "",
-    interpolate: "=",
-    raw: "~",
-  },
-  plugins: [],
-  tags: ["{%", "%}"],
-  outputTags: ["{{", "}}"],
   useWith: false,
   varName: "it",
 };
