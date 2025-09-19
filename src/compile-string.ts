@@ -1,7 +1,7 @@
 /* TYPES */
 
 import type { AstObject } from "./parse.ts";
-import type { Eta } from "./core.ts";
+import type { Chuck } from "./core.ts";
 
 /* END TYPES */
 
@@ -10,7 +10,7 @@ import type { Eta } from "./core.ts";
  */
 
 export function compileToString(
-  this: Eta,
+  this: Chuck,
   str: string,
 ): string {
   const config = this.config;
@@ -21,7 +21,7 @@ export function compileToString(
   let res = `${config.functionHeader}
 let include = (template, data) => this.render(template, data, options);
 
-let __eta = {res: "", e: this.config.escapeFunction, f: this.config.filterFunction${
+let __chuck = {res: "", e: this.config.escapeFunction, f: this.config.filterFunction${
     config.debug
       ? ', line: 1, templateStr: "' +
         str.replace(/\\|"/g, "\\$&").replace(/\r\n|\n|\r/g, "\\n") +
@@ -30,22 +30,22 @@ let __eta = {res: "", e: this.config.escapeFunction, f: this.config.filterFuncti
   }};
 
 function layout(path, data) {
-  __eta.layout = path;
-  __eta.layoutData = data;
+  __chuck.layout = path;
+  __chuck.layoutData = data;
 }${config.debug ? "try {" : ""}${
     config.useWith ? "with(" + config.varName + "||{}){" : ""
   }
 
 ${compileBody.call(this, buffer)}
-if (__eta.layout) {
-  __eta.res = include (__eta.layout, {...${config.varName}, body: __eta.res, ...__eta.layoutData});
+if (__chuck.layout) {
+  __chuck.res = include (__chuck.layout, {...${config.varName}, body: __chuck.res, ...__chuck.layoutData});
 }
 ${config.useWith ? "}" : ""}${
     config.debug
-      ? "} catch (e) { this.RuntimeErr(e, __eta.templateStr, __eta.line) }"
+      ? "} catch (e) { this.RuntimeErr(e, __chuck.templateStr, __chuck.line) }"
       : ""
   }
-return __eta.res;
+return __chuck.res;
 `;
 
   return res;
@@ -59,11 +59,11 @@ return __eta.res;
  * ```js
  * let templateAST = ['Hi ', { val: 'it.name', t: 'i' }]
  * compileBody.call(Eta, templateAST)
- * // => "__eta.res+='Hi '\n__eta.res+=__eta.e(it.name)\n"
+ * // => "__chuck.res+='Hi '\n__chuck.res+=__chuck.e(it.name)\n"
  * ```
  */
 
-export function compileBody(this: Eta, buff: Array<AstObject>): string {
+export function compileBody(this: Chuck, buff: Array<AstObject>): string {
   const config = this.config;
 
   let i = 0;
@@ -76,12 +76,12 @@ export function compileBody(this: Eta, buff: Array<AstObject>): string {
       const str = currentBlock;
 
       // we know string exists
-      returnStr += "__eta.res+='" + str + "'\n";
+      returnStr += "__chuck.res+='" + str + "'\n";
     } else {
       const type = currentBlock.t; // "r", "e", or "i"
       let content = currentBlock.val || "";
 
-      if (config.debug) returnStr += "__eta.line=" + currentBlock.lineNo + "\n";
+      if (config.debug) returnStr += "__chuck.line=" + currentBlock.lineNo + "\n";
 
       if (type === "r") {
         // raw
@@ -91,10 +91,10 @@ export function compileBody(this: Eta, buff: Array<AstObject>): string {
           const filterChain = JSON.stringify((currentBlock as any).filters);
           content = `this.applyFilters(${content}, ${filterChain})`;
         } else if (config.autoFilter) {
-          content = "__eta.f(" + content + ")";
+          content = "__chuck.f(" + content + ")";
         }
 
-        returnStr += "__eta.res+=" + content + "\n";
+        returnStr += "__chuck.res+=" + content + "\n";
       } else if (type === "i") {
         // interpolate
 
@@ -103,14 +103,14 @@ export function compileBody(this: Eta, buff: Array<AstObject>): string {
           const filterChain = JSON.stringify((currentBlock as any).filters);
           content = `this.applyFilters(${content}, ${filterChain})`;
         } else if (config.autoFilter) {
-          content = "__eta.f(" + content + ")";
+          content = "__chuck.f(" + content + ")";
         }
 
         if (config.autoEscape) {
-          content = "__eta.e(" + content + ")";
+          content = "__chuck.e(" + content + ")";
         }
 
-        returnStr += "__eta.res+=" + content + "\n";
+        returnStr += "__chuck.res+=" + content + "\n";
       } else if (type === "e") {
         // execute
         returnStr += content + "\n";

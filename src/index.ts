@@ -1,11 +1,11 @@
-import { Eta as EtaCore } from "./core.ts";
+import { Chuck as ChuckCore } from "./core.ts";
 export {
-  EtaError,
-  EtaNameResolutionError,
-  EtaParseError,
-  EtaRuntimeError,
+  ChuckError,
+  ChuckNameResolutionError,
+  ChuckParseError,
+  ChuckRuntimeError,
 } from "./err.ts";
-export { type EtaConfig, type Options } from "./config.ts";
+export { type ChuckConfig, type Options } from "./config.ts";
 export { transformTwigSyntax } from "./twig-syntax.ts";
 
-export class Eta extends EtaCore {}
+export class Chuck extends ChuckCore {}

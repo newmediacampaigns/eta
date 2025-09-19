@@ -1,34 +1,34 @@
-export class EtaError extends Error {
+export class ChuckError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = "Eta Error";
+    this.name = "Chuck Error";
   }
 }
 
-export class EtaParseError extends EtaError {
+export class ChuckParseError extends ChuckError {
   constructor(message: string) {
     super(message);
-    this.name = "EtaParser Error";
+    this.name = "ChuckParser Error";
   }
 }
 
-export class EtaRuntimeError extends EtaError {
+export class ChuckRuntimeError extends ChuckError {
   constructor(message: string) {
     super(message);
-    this.name = "EtaRuntime Error";
+    this.name = "ChuckRuntime Error";
   }
 }
 
 
-export class EtaNameResolutionError extends EtaError {
+export class ChuckNameResolutionError extends ChuckError {
   constructor(message: string) {
     super(message);
-    this.name = "EtaNameResolution Error";
+    this.name = "ChuckNameResolution Error";
   }
 }
 
 /**
- * Throws an EtaError with a nicely formatted error and message showing where in the template the error occurred.
+ * Throws a ChuckError with a nicely formatted error and message showing where in the template the error occurred.
  */
 
 export function ParseErr(message: string, str: string, indx: number): never {
@@ -47,7 +47,7 @@ export function ParseErr(message: string, str: string, indx: number): never {
     "  " +
     Array(colNo).join(" ") +
     "^";
-  throw new EtaParseError(message);
+  throw new ChuckParseError(message);
 }
 
 export function RuntimeErr(
@@ -72,7 +72,7 @@ export function RuntimeErr(
 
   const header = "line " + lineNo + "\n";
 
-  const err = new EtaRuntimeError(
+  const err = new ChuckRuntimeError(
     header + context + "\n\n" + originalError.message,
   );
 

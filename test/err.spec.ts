@@ -1,24 +1,24 @@
 /* global it, expect, describe */
 
 import {
-  Eta,
-  EtaError,
-  EtaParseError,
-  EtaRuntimeError,
-  EtaNameResolutionError,
+  Chuck,
+  ChuckError,
+  ChuckParseError,
+  ChuckRuntimeError,
+  ChuckNameResolutionError,
 } from "../src/index";
 
 describe("ParseErr", () => {
-  const eta = new Eta();
+  const chuck = new Chuck();
 
   it("error while parsing - renderString", () => {
     try {
-      eta.renderString("template {%", {});
+      chuck.renderString("template {%", {});
     } catch (ex) {
-      expect(ex).toBeInstanceOf(EtaError);
-      expect(ex).toBeInstanceOf(EtaParseError);
-      expect((ex as EtaParseError).name).toBe("EtaParser Error");
-      expect((ex as EtaParseError).message).toBe(`unclosed tag at line 1 col 10:
+      expect(ex).toBeInstanceOf(ChuckError);
+      expect(ex).toBeInstanceOf(ChuckParseError);
+      expect((ex as ChuckParseError).name).toBe("ChuckParser Error");
+      expect((ex as ChuckParseError).message).toBe(`unclosed tag at line 1 col 10:
 
   template {%
            ^`);
@@ -28,12 +28,12 @@ describe("ParseErr", () => {
 
   it("error while parsing - compile", () => {
     try {
-      eta.compile("template {%");
+      chuck.compile("template {%");
     } catch (ex) {
-      expect(ex).toBeInstanceOf(EtaError);
-      expect(ex).toBeInstanceOf(EtaParseError);
-      expect((ex as EtaParseError).name).toBe("EtaParser Error");
-      expect((ex as EtaParseError).message).toBe(`unclosed tag at line 1 col 10:
+      expect(ex).toBeInstanceOf(ChuckError);
+      expect(ex).toBeInstanceOf(ChuckParseError);
+      expect((ex as ChuckParseError).name).toBe("ChuckParser Error");
+      expect((ex as ChuckParseError).message).toBe(`unclosed tag at line 1 col 10:
 
   template {%
            ^`);
@@ -43,19 +43,19 @@ describe("ParseErr", () => {
 });
 
 describe("RuntimeErr", () => {
-  const eta = new Eta({ debug: true });
+  const chuck = new Chuck({ debug: true });
 
   it("error throws correctly", () => {
     // Load the template manually since we don't have file system access
-    eta.loadTemplate("runtime-error", "{{ undefinedVariable }}\nLorem Ipsum");
-    
+    chuck.loadTemplate("runtime-error", "{{ undefinedVariable }}\nLorem Ipsum");
+
     try {
-      eta.render("runtime-error", {});
+      chuck.render("runtime-error", {});
     } catch (ex) {
-      expect(ex).toBeInstanceOf(EtaError);
-      expect(ex).toBeInstanceOf(EtaRuntimeError);
-      expect((ex as EtaRuntimeError).name).toBe("ReferenceError");
-      expect((ex as EtaRuntimeError).message).toBe(`line 1
+      expect(ex).toBeInstanceOf(ChuckError);
+      expect(ex).toBeInstanceOf(ChuckRuntimeError);
+      expect((ex as ChuckRuntimeError).name).toBe("ReferenceError");
+      expect((ex as ChuckRuntimeError).message).toBe(`line 1
  >> 1| {{ undefinedVariable }}
     2| Lorem Ipsum
 
@@ -65,18 +65,18 @@ undefinedVariable is not defined`);
 });
 
 
-describe("EtaNameResolutionError", () => {
-  const eta = new Eta({ debug: true });
+describe("ChuckNameResolutionError", () => {
+  const chuck = new Chuck({ debug: true });
 
   it("error throws correctly", () => {
     const template = "@not-existing-tp";
 
     try {
-      eta.render(template, {});
+      chuck.render(template, {});
     } catch (ex) {
-      expect(ex).toBeInstanceOf(EtaNameResolutionError);
-      expect((ex as EtaNameResolutionError).name).toBe("EtaNameResolution Error");
-      expect((ex as EtaNameResolutionError).message).toBe(`Failed to get template '${template}'`);
+      expect(ex).toBeInstanceOf(ChuckNameResolutionError);
+      expect((ex as ChuckNameResolutionError).name).toBe("ChuckNameResolution Error");
+      expect((ex as ChuckNameResolutionError).message).toBe(`Failed to get template '${template}'`);
     }
   });
 });

@@ -1,10 +1,10 @@
 /* global it, expect, describe */
 
-import { Eta } from "../src/index";
+import { Chuck } from "../src/index";
 import { transformTwigSyntax } from "../src/twig-syntax";
 
 describe("Basic Twig-like Syntax Support", () => {
-  const eta = new Eta();
+  const chuck = new Chuck();
 
   describe("For Loop Syntax", () => {
     it("transforms simple for loop", () => {
@@ -14,7 +14,7 @@ describe("Basic Twig-like Syntax Support", () => {
         {% endfor %}
       `;
 
-      const result = eta.renderString(template, { items: ['a', 'b', 'c'] }) as string;
+      const result = chuck.renderString(template, { items: ['a', 'b', 'c'] }) as string;
       expect(result.trim()).toContain('<p>a</p>');
       expect(result.trim()).toContain('<p>b</p>');
       expect(result.trim()).toContain('<p>c</p>');
@@ -27,7 +27,7 @@ describe("Basic Twig-like Syntax Support", () => {
         {% endfor %}
       `;
 
-      const result = eta.renderString(template, {
+      const result = chuck.renderString(template, {
         data: { name: 'John', age: 30 }
       }) as string;
       expect(result).toContain('<p>name: John</p>');
@@ -41,7 +41,7 @@ describe("Basic Twig-like Syntax Support", () => {
         {% endfor %}
       `;
 
-      const result1 = eta.renderString(template1, {
+      const result1 = chuck.renderString(template1, {
         middle: [1, 2, 3]
       }) as string;
       expect(result1).toContain('<span>1</span>');
@@ -54,7 +54,7 @@ describe("Basic Twig-like Syntax Support", () => {
         {% endfor %}
       `;
 
-      const result2 = eta.renderString(template2, {
+      const result2 = chuck.renderString(template2, {
         getPages: () => ['home', 'about', 'contact']
       }) as string;
       expect(result2).toContain('<div>home</div>');
@@ -67,7 +67,7 @@ describe("Basic Twig-like Syntax Support", () => {
         {% endfor %}
       `;
 
-      const result3 = eta.renderString(template3, {
+      const result3 = chuck.renderString(template3, {
         pages: [
           { title: 'Home' },
           { title: 'About' }
@@ -86,10 +86,10 @@ describe("Basic Twig-like Syntax Support", () => {
         {% endif %}
       `;
 
-      const result1 = eta.renderString(template, { user: { isAdmin: true } }) as string;
+      const result1 = chuck.renderString(template, { user: { isAdmin: true } }) as string;
       expect(result1).toContain('<p>Admin Panel</p>');
 
-      const result2 = eta.renderString(template, { user: { isAdmin: false } }) as string;
+      const result2 = chuck.renderString(template, { user: { isAdmin: false } }) as string;
       expect(result2).not.toContain('<p>Admin Panel</p>');
     });
 
@@ -102,10 +102,10 @@ describe("Basic Twig-like Syntax Support", () => {
         {% endif %}
       `;
 
-      const result1 = eta.renderString(template, { user: { isActive: true } }) as string;
+      const result1 = chuck.renderString(template, { user: { isActive: true } }) as string;
       expect(result1).toContain('<span>Active</span>');
 
-      const result2 = eta.renderString(template, { user: { isActive: false } }) as string;
+      const result2 = chuck.renderString(template, { user: { isActive: false } }) as string;
       expect(result2).toContain('<span>Inactive</span>');
     });
 
@@ -120,13 +120,13 @@ describe("Basic Twig-like Syntax Support", () => {
         {% endif %}
       `;
 
-      const result1 = eta.renderString(template, { user: { role: 'admin' } }) as string;
+      const result1 = chuck.renderString(template, { user: { role: 'admin' } }) as string;
       expect(result1).toContain('<p>Administrator</p>');
 
-      const result2 = eta.renderString(template, { user: { role: 'moderator' } }) as string;
+      const result2 = chuck.renderString(template, { user: { role: 'moderator' } }) as string;
       expect(result2).toContain('<p>Moderator</p>');
 
-      const result3 = eta.renderString(template, { user: { role: 'viewer' } }) as string;
+      const result3 = chuck.renderString(template, { user: { role: 'viewer' } }) as string;
       expect(result3).toContain('<p>User</p>');
     });
 
@@ -141,22 +141,22 @@ describe("Basic Twig-like Syntax Support", () => {
         {% endif %}
       `;
 
-      const result1 = eta.renderString(template, {
+      const result1 = chuck.renderString(template, {
         user: { isActive: true, role: 'admin', isSuperUser: false }
       }) as string;
       expect(result1).toContain('<p>Admin Access</p>');
 
-      const result2 = eta.renderString(template, {
+      const result2 = chuck.renderString(template, {
         user: { isActive: false, role: 'admin', isSuperUser: true }
       }) as string;
       expect(result2).toContain('<p>Admin Access</p>');
 
-      const result3 = eta.renderString(template, {
+      const result3 = chuck.renderString(template, {
         user: { isActive: true, role: 'moderator', isSuperUser: false }
       }) as string;
       expect(result3).toContain('<p>Staff Access</p>');
 
-      const result4 = eta.renderString(template, {
+      const result4 = chuck.renderString(template, {
         user: { isActive: false, role: 'user', isSuperUser: false }
       }) as string;
       expect(result4).toContain('<p>Regular Access</p>');
@@ -172,7 +172,7 @@ describe("Basic Twig-like Syntax Support", () => {
       `;
 
       // Test with function that returns true
-      const result1 = eta.renderString(template, {
+      const result1 = chuck.renderString(template, {
         user: {
           hasMethod: () => true,
           isAdmin: () => false
@@ -181,7 +181,7 @@ describe("Basic Twig-like Syntax Support", () => {
       expect(result1).toContain('<p>Access Granted</p>');
 
       // Test with function that returns false, but isAdmin returns true
-      const result2 = eta.renderString(template, {
+      const result2 = chuck.renderString(template, {
         user: {
           hasMethod: () => false,
           isAdmin: () => true
@@ -190,7 +190,7 @@ describe("Basic Twig-like Syntax Support", () => {
       expect(result2).toContain('<p>Access Granted</p>');
 
       // Test with both functions returning false
-      const result3 = eta.renderString(template, {
+      const result3 = chuck.renderString(template, {
         user: {
           hasMethod: () => false,
           isAdmin: () => false
@@ -270,7 +270,7 @@ describe("Basic Twig-like Syntax Support", () => {
         Hello {# This is a comment #} World
       `;
 
-      const result = eta.renderString(template, {}) as string;
+      const result = chuck.renderString(template, {}) as string;
       expect(result.trim()).toBe("Hello  World");
     });
 
@@ -283,7 +283,7 @@ describe("Basic Twig-like Syntax Support", () => {
         End
       `;
 
-      const result = eta.renderString(template, {}) as string;
+      const result = chuck.renderString(template, {}) as string;
       expect(result).toContain("Start");
       expect(result).toContain("End");
       expect(result).not.toContain("multi-line");
@@ -296,7 +296,7 @@ describe("Basic Twig-like Syntax Support", () => {
         {{ it.greeting }}
       `;
 
-      const result = eta.renderString(template, {
+      const result = chuck.renderString(template, {
         name: "John",
         greeting: "Hello"
       }) as string;
@@ -311,7 +311,7 @@ describe("Basic Twig-like Syntax Support", () => {
         Success
       `;
 
-      const result = eta.renderString(template, {}) as string;
+      const result = chuck.renderString(template, {}) as string;
       expect(result).toContain("Success");
       expect(result).not.toContain("braces");
     });

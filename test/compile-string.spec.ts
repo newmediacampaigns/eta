@@ -1,8 +1,8 @@
 /* global it, expect, describe */
 
-import { Eta } from "../src/index";
+import { Chuck } from "../src/index";
 
-const eta = new Eta();
+const chuck = new Chuck();
 
 const fs = require("fs"),
   path = require("path"),
@@ -12,121 +12,121 @@ const complexTemplate = fs.readFileSync(filePath, "utf8");
 
 describe("Compile to String test", () => {
   it("compiles a simple template", () => {
-    const str = eta.compileToString("hi {{ it.name }}");
+    const str = chuck.compileToString("hi {{ it.name }}");
     expect(str).toEqual(`
 let include = (template, data) => this.render(template, data, options);
 
-let __eta = {res: "", e: this.config.escapeFunction, f: this.config.filterFunction};
+let __chuck = {res: "", e: this.config.escapeFunction, f: this.config.filterFunction};
 
 function layout(path, data) {
-  __eta.layout = path;
-  __eta.layoutData = data;
+  __chuck.layout = path;
+  __chuck.layoutData = data;
 }
 
-__eta.res+='hi '
-__eta.res+=__eta.e(it.name)
+__chuck.res+='hi '
+__chuck.res+=__chuck.e(it.name)
 
-if (__eta.layout) {
-  __eta.res = include (__eta.layout, {...it, body: __eta.res, ...__eta.layoutData});
+if (__chuck.layout) {
+  __chuck.res = include (__chuck.layout, {...it, body: __chuck.res, ...__chuck.layoutData});
 }
 
-return __eta.res;
+return __chuck.res;
 `);
   });
 
   it("compiles a simple template with a raw tag", () => {
-    const str = eta.compileToString("hi {%~ it.name %}");
+    const str = chuck.compileToString("hi {%~ it.name %}");
     expect(str).toEqual(`
 let include = (template, data) => this.render(template, data, options);
 
-let __eta = {res: "", e: this.config.escapeFunction, f: this.config.filterFunction};
+let __chuck = {res: "", e: this.config.escapeFunction, f: this.config.filterFunction};
 
 function layout(path, data) {
-  __eta.layout = path;
-  __eta.layoutData = data;
+  __chuck.layout = path;
+  __chuck.layoutData = data;
 }
 
-__eta.res+='hi '
-__eta.res+=it.name
+__chuck.res+='hi '
+__chuck.res+=it.name
 
-if (__eta.layout) {
-  __eta.res = include (__eta.layout, {...it, body: __eta.res, ...__eta.layoutData});
+if (__chuck.layout) {
+  __chuck.res = include (__chuck.layout, {...it, body: __chuck.res, ...__chuck.layoutData});
 }
 
-return __eta.res;
+return __chuck.res;
 `);
   });
 
   it("works with basic interpolation", () => {
-    const str = eta.compileToString("hi {{ it.firstname }} {{ it.lastname }}");
+    const str = chuck.compileToString("hi {{ it.firstname }} {{ it.lastname }}");
     expect(str).toEqual(`
 let include = (template, data) => this.render(template, data, options);
 
-let __eta = {res: "", e: this.config.escapeFunction, f: this.config.filterFunction};
+let __chuck = {res: "", e: this.config.escapeFunction, f: this.config.filterFunction};
 
 function layout(path, data) {
-  __eta.layout = path;
-  __eta.layoutData = data;
+  __chuck.layout = path;
+  __chuck.layoutData = data;
 }
 
-__eta.res+='hi '
-__eta.res+=__eta.e(it.firstname)
-__eta.res+=' '
-__eta.res+=__eta.e(it.lastname)
+__chuck.res+='hi '
+__chuck.res+=__chuck.e(it.firstname)
+__chuck.res+=' '
+__chuck.res+=__chuck.e(it.lastname)
 
-if (__eta.layout) {
-  __eta.res = include (__eta.layout, {...it, body: __eta.res, ...__eta.layoutData});
+if (__chuck.layout) {
+  __chuck.res = include (__chuck.layout, {...it, body: __chuck.res, ...__chuck.layoutData});
 }
 
-return __eta.res;
+return __chuck.res;
 `);
   });
 
   it("compiles complex template", () => {
-    const str = eta.compileToString(complexTemplate);
+    const str = chuck.compileToString(complexTemplate);
     expect(str).toEqual(`
 let include = (template, data) => this.render(template, data, options);
 
-let __eta = {res: "", e: this.config.escapeFunction, f: this.config.filterFunction};
+let __chuck = {res: "", e: this.config.escapeFunction, f: this.config.filterFunction};
 
 function layout(path, data) {
-  __eta.layout = path;
-  __eta.layoutData = data;
+  __chuck.layout = path;
+  __chuck.layoutData = data;
 }
 
-__eta.res+='Hi\\n'
+__chuck.res+='Hi\\n'
 console.log("Hope you like Eta!")
-__eta.res+='\\n'
-__eta.res+=__eta.e(it.htmlstuff)
-__eta.res+='\\n\\n'
+__chuck.res+='\\n'
+__chuck.res+=__chuck.e(it.htmlstuff)
+__chuck.res+='\\n\\n'
 for (var key in it.obj) {
-__eta.res+='\\nValue: '
-__eta.res+=__eta.e(it.obj[key])
-__eta.res+=', Key: '
-__eta.res+=__eta.e(key)
-__eta.res+='\\n\\n'
+__chuck.res+='\\nValue: '
+__chuck.res+=__chuck.e(it.obj[key])
+__chuck.res+=', Key: '
+__chuck.res+=__chuck.e(key)
+__chuck.res+='\\n\\n'
 if (key === 'thirdchild') {
-__eta.res+='\\n  '
+__chuck.res+='\\n  '
 for (var i = 0, arr = it.obj[key]; i < arr.length; i++) {
-__eta.res+='\\n      Salutations! Index: '
-__eta.res+=__eta.e(i)
-__eta.res+=', parent key: '
-__eta.res+=__eta.e(key)
-__eta.res+='\\n      \\n  '
+__chuck.res+='\\n      Salutations! Index: '
+__chuck.res+=__chuck.e(i)
+__chuck.res+=', parent key: '
+__chuck.res+=__chuck.e(key)
+__chuck.res+='\\n      \\n  '
 }
-__eta.res+='\\n'
+__chuck.res+='\\n'
 }
-__eta.res+='\\n'
+__chuck.res+='\\n'
 }
-__eta.res+='\\n\\nThis is a partial: '
-__eta.res+=include("mypartial")
-__eta.res+='\\n'
+__chuck.res+='\\n\\nThis is a partial: '
+__chuck.res+=include("mypartial")
+__chuck.res+='\\n'
 
-if (__eta.layout) {
-  __eta.res = include (__eta.layout, {...it, body: __eta.res, ...__eta.layoutData});
+if (__chuck.layout) {
+  __chuck.res = include (__chuck.layout, {...it, body: __chuck.res, ...__chuck.layoutData});
 }
 
-return __eta.res;
+return __chuck.res;
 `);
   });
 });

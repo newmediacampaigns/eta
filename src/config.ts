@@ -7,7 +7,7 @@ export interface Options {
   // No options currently needed - placeholder for future options
 }
 
-export interface EtaConfig {
+export interface ChuckConfig {
   /** Whether or not to automatically XML-escape interpolations. Default true */
   autoEscape: boolean;
 
@@ -39,8 +39,8 @@ export interface EtaConfig {
 
 /* END TYPES */
 
-/** Eta's base (global) configuration */
-const defaultConfig: EtaConfig = {
+/** Chuck's base (global) configuration */
+const defaultConfig: ChuckConfig = {
   autoEscape: true,
   autoFilter: false,
   debug: false,

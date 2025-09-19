@@ -1,45 +1,35 @@
 {
-  "name": "eta",
+  "name": "chuck",
   "version": "3.5.0",
   "description": "Lightweight, fast, and powerful embedded JS template engine",
   "keywords": [
     "handlebars",
     "ejs",
-    "eta",
+    "chuck",
     "template engine",
     "embedded template engine",
     "layouts",
     "partials",
     "typescript types"
   ],
-  "homepage": "https://eta.js.org",
   "type": "commonjs",
-  "main": "./dist/eta.umd.js",
-  "umd:main": "./dist/eta.umd.js",
+  "main": "./dist/chuck.umd.js",
+  "umd:main": "./dist/chuck.umd.js",
   "unpkg": "./dist/browser.umd.js",
-  "module": "./dist/eta.module.mjs",
+  "module": "./dist/chuck.module.mjs",
   "types": "./dist/types/index.d.ts",
   "source": "src/index.ts",
   "exports": {
     "types": "./dist/types/index.d.ts",
     "browser": "./dist/browser.umd.js",
-    "import": "./dist/eta.module.mjs",
-    "require": "./dist/eta.umd.js",
-    "default": "./dist/eta.umd.js"
+    "import": "./dist/chuck.module.mjs",
+    "require": "./dist/chuck.umd.js",
+    "default": "./dist/chuck.umd.js"
   },
   "sideEffects": false,
   "files": [
     "dist"
   ],
-  "author": "Ben Gubler <nebrelbug@gmail.com>",
-  "funding": "https://github.com/eta-dev/eta?sponsor=1",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eta-dev/eta.git"
-  },
-  "bugs": {
-    "url": "https://github.com/eta-dev/eta/issues"
-  },
   "license": "MIT",
   "engines": {
     "node": ">=6.0.0"

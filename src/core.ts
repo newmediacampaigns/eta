@@ -4,15 +4,15 @@ import { compileBody, compileToString } from "./compile-string.ts";
 import { defaultConfig } from "./config.ts";
 import { parse } from "./parse.ts";
 import { render, renderString } from "./render.ts";
-import { EtaError, RuntimeErr } from "./err.ts";
+import { ChuckError, RuntimeErr } from "./err.ts";
 import { TemplateFunction } from "./compile.ts";
 
 /* TYPES */
-import type { EtaConfig } from "./config.ts";
+import type { ChuckConfig } from "./config.ts";
 /* END TYPES */
 
-export class Eta {
-  constructor(customConfig?: Partial<EtaConfig>) {
+export class Chuck {
+  constructor(customConfig?: Partial<ChuckConfig>) {
     if (customConfig) {
       this.config = { ...defaultConfig, ...customConfig };
     } else {
@@ -22,7 +22,7 @@ export class Eta {
     this.initBuiltinFilters();
   }
 
-  config: EtaConfig;
+  config: ChuckConfig;
 
   RuntimeErr = RuntimeErr;
 
@@ -40,11 +40,11 @@ export class Eta {
 
   // METHODS
 
-  configure(customConfig: Partial<EtaConfig>) {
+  configure(customConfig: Partial<ChuckConfig>) {
     this.config = { ...this.config, ...customConfig };
   }
 
-  withConfig(customConfig: Partial<EtaConfig>): this & { config: EtaConfig } {
+  withConfig(customConfig: Partial<ChuckConfig>): this & { config: ChuckConfig } {
     return { ...this, config: { ...this.config, ...customConfig } };
   }
 
@@ -132,4 +132,4 @@ export class Eta {
 }
 
 // for instance checking against thrown errors
-export { EtaError };
+export { ChuckError };

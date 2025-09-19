@@ -1,11 +1,11 @@
-import { EtaParseError } from "./err.ts";
+import { ChuckParseError } from "./err.ts";
 
 /* TYPES */
-import type { Eta } from "./core.ts";
-import type { EtaConfig } from "./config.ts";
+import type { Chuck } from "./core.ts";
+import type { ChuckConfig } from "./config.ts";
 
 export type TemplateFunction = (
-  this: Eta,
+  this: Chuck,
   data?: object,
   options?: object,
 ) => string;
@@ -18,10 +18,10 @@ export type TemplateFunction = (
  * @param options - A custom configuration object (optional)
  */
 export function compile(
-  this: Eta,
+  this: Chuck,
   str: string,
 ): TemplateFunction {
-  const config: EtaConfig = this.config;
+  const config: ChuckConfig = this.config;
 
   try {
     return new Function(
@@ -31,7 +31,7 @@ export function compile(
     ) as TemplateFunction; // eslint-disable-line no-new-func
   } catch (e) {
     if (e instanceof SyntaxError) {
-      throw new EtaParseError(
+      throw new ChuckParseError(
         "Bad template syntax\n\n" +
           e.message +
           "\n" +

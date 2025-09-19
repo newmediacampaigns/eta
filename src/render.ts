@@ -1,12 +1,12 @@
-import { EtaNameResolutionError } from "./err.ts";
+import { ChuckNameResolutionError } from "./err.ts";
 
 /* TYPES */
 import type { TemplateFunction } from "./compile.ts";
-import type { Eta } from "./core.ts";
+import type { Chuck } from "./core.ts";
 /* END TYPES */
 
 function handleCache(
-  this: Eta,
+  this: Chuck,
   template: string,
 ): TemplateFunction {
   // Try the template name as-is first
@@ -25,14 +25,14 @@ function handleCache(
   if (cachedTemplate) {
     return cachedTemplate;
   } else {
-    throw new EtaNameResolutionError(
+    throw new ChuckNameResolutionError(
       "Failed to get template '" + template + "'",
     );
   }
 }
 
 export function render<T extends object>(
-  this: Eta,
+  this: Chuck,
   template: string | TemplateFunction,
   data: T,
   meta?: object,
@@ -50,7 +50,7 @@ export function render<T extends object>(
 }
 
 export function renderString<T extends object>(
-  this: Eta,
+  this: Chuck,
   template: string,
   data: T,
   meta?: object,

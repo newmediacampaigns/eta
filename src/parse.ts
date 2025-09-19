@@ -3,7 +3,7 @@ import { transformTwigSyntax } from "./twig-syntax.ts";
 
 /* TYPES */
 
-import type { Eta } from "./core.ts";
+import type { Chuck } from "./core.ts";
 
 export type TagType = "r" | "e" | "i" | "";
 
@@ -83,7 +83,7 @@ function parseFilters(content: string): {value: string, filters: Array<{name: st
   return { value, filters };
 }
 
-export function parse(this: Eta, str: string): Array<AstObject> {
+export function parse(this: Chuck, str: string): Array<AstObject> {
   const config = this.config;
 
   let buffer: Array<AstObject> = [];

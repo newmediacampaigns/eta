@@ -1,3 +1,3 @@
-import { Eta as EtaCore } from "./core.ts";
+import { Chuck as ChuckCore } from "./core.ts";
 
-export class Eta extends EtaCore {}
+export class Chuck extends ChuckCore {}
