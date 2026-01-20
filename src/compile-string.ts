@@ -113,7 +113,14 @@ export function compileBody(this: Chuck, buff: Array<AstObject>): string {
         returnStr += "__chuck.res+=" + content + "\n";
       } else if (type === "e") {
         // execute
-        returnStr += content + "\n";
+        if (currentBlock.assignment) {
+          // Handle assignment with filters
+          const { varKeyword, varName, value, filters } = currentBlock.assignment;
+          const filterChain = JSON.stringify(filters);
+          returnStr += `${varKeyword} ${varName} = this.applyFilters(${value}, ${filterChain})\n`;
+        } else {
+          returnStr += content + "\n";
+        }
       }
     }
   }

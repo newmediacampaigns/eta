@@ -133,4 +133,62 @@ describe("Twig-like Filters", () => {
       expect(chuck.renderString("{{ it.text | slice(1, 4) }}", { text: "hello" })).toEqual("ell");
     });
   });
+
+  describe("Filters in assignments", () => {
+    it("applies filter with Twig-style set syntax", () => {
+      const result = chuck.renderString(
+        "{% set name = it.name | upper %}{{ name }}",
+        { name: "john" }
+      );
+      expect(result).toEqual("JOHN");
+    });
+
+    it("applies filter with JS-style let syntax", () => {
+      const result = chuck.renderString(
+        "{% let name = it.name | upper %}{{ name }}",
+        { name: "jane" }
+      );
+      expect(result).toEqual("JANE");
+    });
+
+    it("applies filter with const syntax", () => {
+      const result = chuck.renderString(
+        "{% const name = it.name | capitalize %}{{ name }}",
+        { name: "alice" }
+      );
+      expect(result).toEqual("Alice");
+    });
+
+    it("applies multiple chained filters in assignment", () => {
+      const result = chuck.renderString(
+        "{% set text = it.text | trim | upper %}{{ text }}",
+        { text: "  hello world  " }
+      );
+      expect(result).toEqual("HELLO WORLD");
+    });
+
+    it("applies filter with arguments in assignment", () => {
+      const result = chuck.renderString(
+        "{% let items = it.items | join(' - ') %}{{ items }}",
+        { items: ["a", "b", "c"] }
+      );
+      expect(result).toEqual("a - b - c");
+    });
+
+    it("works with assignment followed by conditional", () => {
+      const result = chuck.renderString(
+        "{% set name = it.name | upper %}{% if name === 'JOHN' %}Hello {{ name }}{% endif %}",
+        { name: "john" }
+      );
+      expect(result).toEqual("Hello JOHN");
+    });
+
+    it("works without filters (regular assignment unchanged)", () => {
+      const result = chuck.renderString(
+        "{% let x = it.value + 1 %}{{ x }}",
+        { value: 5 }
+      );
+      expect(result).toEqual("6");
+    });
+  });
 });

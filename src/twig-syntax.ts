@@ -63,6 +63,20 @@ function transformForLoops(template: string): string {
 }
 
 /**
+ * Transform Twig-like set statements to JavaScript let assignments
+ * {% set x = value %} → {% let x = value %}
+ * {% set x = value | filter %} → {% let x = value | filter %}
+ */
+function transformSetStatements(template: string): string {
+  // Transform {% set var = expression %} to {% let var = expression %}
+  template = template.replace(/\{\%\s*set\s+(\w+)\s*=\s*([^%]+?)\s*\%\}/g, (_, varName, expression) => {
+    return `{% let ${varName} = ${expression.trim()} %}`;
+  });
+
+  return template;
+}
+
+/**
  * Transform Twig-like if statements to JavaScript
  * {% if expression %} → {% if (expression) { %}
  * {% elsif expression %} → {% } else if (expression) { %}
@@ -113,6 +127,7 @@ export function transformTwigSyntax(template: string): string {
   // Apply transformations in order
   transformed = transformForLoops(transformed);
   transformed = transformIfStatements(transformed);
+  transformed = transformSetStatements(transformed);
 
   return transformed;
 }

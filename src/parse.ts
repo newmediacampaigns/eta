@@ -7,11 +7,19 @@ import type { Chuck } from "./core.ts";
 
 export type TagType = "r" | "e" | "i" | "";
 
+export interface AssignmentWithFilters {
+  varKeyword: string;  // "let", "const", or "var"
+  varName: string;
+  value: string;
+  filters: Array<{name: string, args: any[]}>;
+}
+
 export interface TemplateObject {
   t: TagType;
   val: string;
   lineNo?: number;
   filters?: Array<{name: string, args: any[]}>;
+  assignment?: AssignmentWithFilters;
 }
 
 export type AstObject = string | TemplateObject;
@@ -28,6 +36,33 @@ const doubleQuoteReg = /"(?:\\[\s\w"'\\`]|[^\n\r"\\])*?"/g;
 
 function getLineNo(str: string, index: number) {
   return str.slice(0, index).split("\n").length;
+}
+
+/**
+ * Parse assignment statements that may contain filters
+ * e.g., "let x = value | upper | trim" or "const name = it.name | capitalize"
+ */
+function parseAssignmentWithFilters(content: string): AssignmentWithFilters | null {
+  // Match: (let|const|var) varName = expression
+  const assignmentMatch = content.match(/^\s*(let|const|var)\s+(\w+)\s*=\s*(.+)$/);
+  if (!assignmentMatch) {
+    return null;
+  }
+
+  const [, varKeyword, varName, expression] = assignmentMatch;
+  const parsed = parseFilters(expression);
+
+  // Only return assignment info if there are filters
+  if (parsed.filters.length === 0) {
+    return null;
+  }
+
+  return {
+    varKeyword,
+    varName,
+    value: parsed.value,
+    filters: parsed.filters
+  };
 }
 
 function parseFilters(content: string): {value: string, filters: Array<{name: string, args: any[]}>} {
@@ -177,6 +212,14 @@ export function parse(this: Chuck, str: string): Array<AstObject> {
             val: parsed.value,
             filters: parsed.filters.length > 0 ? parsed.filters : undefined
           };
+        } else if (currentType === "e") {
+          // Check for assignments with filters in execute blocks
+          const assignment = parseAssignmentWithFilters(content);
+          if (assignment) {
+            currentObj = { t: currentType, val: content, assignment };
+          } else {
+            currentObj = { t: currentType, val: content };
+          }
         } else {
           currentObj = { t: currentType, val: content };
         }
